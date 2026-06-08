@@ -1,164 +1,103 @@
 import React from "react";
 import { useNavigate } from "react-router";
-import { motion } from "motion/react";
-import { ArrowDown, BookOpen, GitBranch, LogOut, RefreshCcw, Sparkles, User } from "lucide-react";
-import { MOCK_COURSES, state } from "../data";
+import { ArrowRight, LogOut, RefreshCcw, User } from "lucide-react";
+import { state } from "../data";
 import { PageWrapper, SchoolMark } from "../components/layout";
 import { getCourseStats } from "../course-state";
-
-const fallbackProfile = {
-  archetype: "等待生成",
-  tagline: "完成问卷后生成你的方向建议",
-  summary: "你还没有完成选课问卷。完成后，这里会整理你的方向建议、备选课程和阶段计划。",
-  strengths: ["方向参考", "课程组合", "阶段计划"],
-  careerTree: [
-    { title: "完成问卷", description: "先回答几个问题，系统会整理一份选课建议。", courses: [] },
-  ],
-};
+import { CareerReport } from "../components/career-report";
+import { clearCareerResult, getCareerReport, loadCareerResult } from "../career-storage";
 
 export const ProfilePage = () => {
   const navigate = useNavigate();
-  const profile = state.recommendationProfile || fallbackProfile;
+  const result = loadCareerResult();
+  const report = getCareerReport(result);
   const stats = getCourseStats();
-  const expandedStrengths = [
-    ...profile.strengths,
-    "方向更清楚",
-    "课程组合可调整",
-    "适合逐步推进",
-  ].slice(0, 6);
 
   const handleLogout = () => {
     state.isLoggedIn = false;
-    state.recommendationProfile = null;
     navigate("/");
+  };
+
+  const retake = () => {
+    clearCareerResult();
+    navigate("/recommendation");
   };
 
   return (
     <PageWrapper>
-      <div className="min-h-screen bg-gray-50 pb-24">
-        <section className="px-6 pt-10">
-          <div className="mb-5">
-            <SchoolMark compact />
-          </div>
-          <div className="rounded-[40px] bg-gray-900 text-white p-8 relative overflow-hidden shadow-xl shadow-gray-200">
-            <div className="absolute right-[-48px] top-[-56px] w-48 h-48 rounded-full bg-blue-500/20 blur-3xl" />
-            <div className="flex items-center gap-4 relative">
-              <div className="w-16 h-16 rounded-[24px] bg-white/10 flex items-center justify-center">
-                <User size={32} />
+      <div className="min-h-screen bg-[#F7F8FA] pb-28 overflow-x-hidden">
+        <section className="px-5 pt-8">
+          <SchoolMark compact />
+          <div className="mt-5 rounded-[34px] bg-gradient-to-br from-blue-950 to-blue-700 p-6 text-white shadow-xl shadow-blue-900/15">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-[20px] bg-white/12 flex items-center justify-center">
+                <User size={28} />
               </div>
               <div>
-                <h1 className="text-2xl font-black">{state.user.name}</h1>
-                <p className="text-[10px] font-black text-white/40 uppercase tracking-widest mt-1">
-                  {state.user.grade} · {state.user.major}
+                <h1 className="text-xl font-black">{state.user.name}</h1>
+                <p className="mt-1 text-[10px] font-black uppercase tracking-widest text-blue-200">
+                  浙江财经大学 · {state.user.grade} · {state.user.major}
                 </p>
               </div>
             </div>
-
-            <div className="relative mt-8">
+            <div className="mt-6 border-t border-white/10 pt-5">
               <p className="text-[10px] font-black uppercase tracking-widest text-blue-200">Course Direction</p>
-              <h2 className="text-4xl font-black mt-2 leading-tight">{profile.archetype}</h2>
-              <p className="text-blue-100 font-bold mt-3">{profile.tagline}</p>
-              <p className="text-sm leading-relaxed text-white/60 mt-5">{profile.summary}</p>
+              <h2 className="mt-2 text-3xl font-black">{report.title}</h2>
+              <p className="mt-3 text-xs font-medium leading-relaxed text-white/65">{report.summary}</p>
+            </div>
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <button
+                onClick={() => navigate(result ? "/recommendation-result" : "/recommendation")}
+                className="rounded-2xl bg-white px-4 py-3 text-xs font-black text-blue-900 flex items-center justify-center gap-2"
+              >
+                {result ? "查看职业方向报告" : "开始职业方向测评"}
+                <ArrowRight size={15} />
+              </button>
+              <button
+                onClick={retake}
+                className="rounded-2xl bg-white/12 px-4 py-3 text-xs font-black text-white flex items-center justify-center gap-2"
+              >
+                <RefreshCcw size={15} />
+                重新测评
+              </button>
             </div>
           </div>
         </section>
 
-        <section className="px-6 mt-6">
+        <section className="px-5 mt-6">
           <div className="rounded-[30px] bg-white border border-gray-100 p-5 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-black text-gray-900 text-lg">选课进度概览</h2>
               <span className="text-[10px] font-black text-blue-700">目标 {stats.targetCredits} 学分</span>
             </div>
             <div className="grid grid-cols-4 gap-2 text-center">
-              <div className="rounded-2xl bg-blue-50 p-3">
-                <p className="text-lg font-black text-blue-700">{stats.selectedCount}</p>
-                <p className="text-[9px] font-black text-blue-700/60">已选</p>
-              </div>
-              <div className="rounded-2xl bg-amber-50 p-3">
-                <p className="text-lg font-black text-amber-700">{stats.favoriteCount}</p>
-                <p className="text-[9px] font-black text-amber-700/60">收藏</p>
-              </div>
-              <div className="rounded-2xl bg-emerald-50 p-3">
-                <p className="text-lg font-black text-emerald-700">{stats.selectedCredits}</p>
-                <p className="text-[9px] font-black text-emerald-700/60">学分</p>
-              </div>
-              <div className="rounded-2xl bg-slate-50 p-3">
-                <p className="text-lg font-black text-slate-700">{stats.remainingCredits}</p>
-                <p className="text-[9px] font-black text-slate-500">剩余</p>
-              </div>
+              {[
+                ["已选", stats.selectedCount, "bg-blue-50 text-blue-700"],
+                ["收藏", stats.favoriteCount, "bg-amber-50 text-amber-700"],
+                ["学分", stats.selectedCredits, "bg-emerald-50 text-emerald-700"],
+                ["剩余", stats.remainingCredits, "bg-slate-50 text-slate-700"],
+              ].map(([label, value, color]) => (
+                <div key={String(label)} className={`rounded-2xl p-3 ${color}`}>
+                  <p className="text-lg font-black">{value}</p>
+                  <p className="text-[9px] font-black opacity-60">{label}</p>
+                </div>
+              ))}
             </div>
             <p className="mt-4 text-xs font-bold text-gray-400">
-              当前方向推荐完成进度：已加入备选 {stats.backupCount} 门，可到备选页继续调整。
+              已加入备选 {stats.backupCount} 门，可继续调整课程组合和模拟课表。
             </p>
           </div>
         </section>
 
-        <section className="px-6 mt-6">
-          <div className="grid grid-cols-3 gap-3">
-            {expandedStrengths.map((item) => (
-              <div key={item} className="bg-white border border-gray-100 rounded-[24px] p-4 shadow-sm min-h-24">
-                <Sparkles size={18} className="text-blue-600 mb-3" />
-                <p className="text-xs font-black text-gray-800 leading-tight">{item}</p>
-              </div>
-            ))}
+        <section className="px-5 mt-6">
+          <div className="mb-4">
+            <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Career Preview</p>
+            <h2 className="mt-1 text-xl font-black text-gray-900">职业方向报告预览</h2>
           </div>
+          <CareerReport result={result} compact />
         </section>
 
-        <section className="px-6 mt-8">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="font-black text-gray-900 text-lg flex items-center gap-2">
-              <GitBranch size={20} className="text-emerald-600" />
-              阶段规划
-            </h2>
-            <button
-              onClick={() => navigate("/recommendation")}
-              className="text-[11px] font-black text-blue-600 flex items-center gap-1"
-            >
-              重新测评
-              <RefreshCcw size={13} />
-            </button>
-          </div>
-
-          <div className="space-y-4">
-            {profile.careerTree.map((node, index) => (
-              <React.Fragment key={node.title}>
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.08 }}
-                  className="relative bg-white rounded-[32px] border border-gray-100 p-5 shadow-sm"
-                >
-                  <div className="absolute left-6 top-5 w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center text-xs font-black">
-                    {index + 1}
-                  </div>
-                  <div className="pl-12">
-                    <h3 className="font-black text-gray-900">{node.title}</h3>
-                    <p className="text-xs leading-relaxed text-gray-400 font-medium mt-2">{node.description}</p>
-                    {node.courses.length > 0 && (
-                      <div className="mt-4 space-y-2">
-                        {node.courses.map((courseName) => (
-                          <div key={courseName} className="rounded-2xl bg-gray-50 px-4 py-3 text-xs font-black text-gray-700 flex items-center gap-2">
-                            <BookOpen size={14} className="text-blue-600" />
-                            {courseName}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-                {index < profile.careerTree.length - 1 && (
-                  <div className="flex justify-center -my-1">
-                    <div className="w-9 h-9 rounded-full bg-white border border-gray-100 shadow-sm flex items-center justify-center text-gray-300">
-                      <ArrowDown size={18} />
-                    </div>
-                  </div>
-                )}
-              </React.Fragment>
-            ))}
-          </div>
-        </section>
-
-        <section className="px-6 mt-8">
+        <section className="px-5 mt-8">
           <button
             onClick={handleLogout}
             className="w-full h-14 bg-red-50 text-red-600 rounded-2xl font-black text-sm flex items-center justify-center gap-2 border border-red-100"

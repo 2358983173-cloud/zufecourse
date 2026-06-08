@@ -1414,14 +1414,7 @@ export const TAG_POOL = ["编程基础", "线代基础", "会计基础", "金工
 export const state = {
   alternateCourseIds: new Set<string>(),
   completedCourseIds: new Set<string>(),
-  recommendationProfile: null as null | {
-    archetype: string;
-    tagline: string;
-    summary: string;
-    answers: Record<string, string>;
-    strengths: string[];
-    careerTree: Array<{ title: string; description: string; courses: string[]; }>;
-  },
+  recommendationProfile: null as any,
   isLoggedIn: false,
   user: { name: "金融学学生", grade: "2023级", major: "金融学", avatar: "" }
 };

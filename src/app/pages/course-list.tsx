@@ -164,28 +164,20 @@ export const CourseList = () => {
           </div>
         </div>
 
-        <div className="relative -mx-6">
-          <div className="pointer-events-none absolute right-0 top-0 bottom-2 z-10 w-10 bg-gradient-to-l from-white to-transparent" />
-          <div
-            className="px-6 overflow-x-scroll overscroll-x-contain touch-pan-x pb-2 no-scrollbar"
-            style={{ WebkitOverflowScrolling: "touch" }}
-          >
-            <div className="flex w-max gap-2 pr-12">
-              {CATEGORIES.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-5 py-2.5 rounded-full text-[11px] font-black whitespace-nowrap transition-all border ${
-                    selectedCategory === cat
-                      ? "bg-[#173b83] text-white border-[#173b83] shadow-lg shadow-blue-900/10"
-                      : "bg-white text-gray-400 border-gray-100 hover:border-gray-200"
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </div>
+        <div className="grid grid-cols-2 gap-2">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`min-h-10 rounded-2xl px-3 py-2 text-[11px] font-black leading-tight transition-all border ${
+                selectedCategory === cat
+                  ? "bg-[#173b83] text-white border-[#173b83] shadow-lg shadow-blue-900/10"
+                  : "bg-white text-gray-500 border-gray-100 hover:border-gray-200"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
       </header>
 

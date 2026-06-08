@@ -15,6 +15,7 @@ import { motion } from "motion/react";
 import { MOCK_COURSES, state } from "../data";
 import { CourseListItem } from "../components/course-items";
 import { PageWrapper, SchoolMark } from "../components/layout";
+import { getCareerReport, loadCareerResult } from "../career-storage";
 
 const directionProfiles = [
   { icon: ChartNoAxesCombined, title: "投资研究", detail: "市场判断与分析", color: "bg-blue-100 text-blue-700" },
@@ -41,7 +42,7 @@ export const Home = () => {
     []
   );
 
-  const profileName = state.recommendationProfile?.archetype || "方向待确认";
+  const profileName = getCareerReport(loadCareerResult()).title || "方向待确认";
 
   const handleSearch = (event: React.FormEvent) => {
     event.preventDefault();
