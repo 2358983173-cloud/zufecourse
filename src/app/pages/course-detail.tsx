@@ -1,0 +1,293 @@
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router";
+import { 
+  ArrowLeft, 
+  Share2, 
+  Users, 
+  Award, 
+  BookOpen, 
+  MessageCircle, 
+  ChevronRight, 
+  CheckCircle2,
+  Clock,
+  Heart,
+  MoreVertical,
+  ThumbsUp,
+  Sparkles
+} from "lucide-react";
+import { MOCK_COURSES, state } from "../data";
+import { PageWrapper } from "../components/layout";
+import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { motion, AnimatePresence } from "motion/react";
+
+const CATEGORY_STYLES: Record<string, string> = {
+  "通识教育必修课": "from-emerald-400 via-emerald-200 to-emerald-50",
+  "学科基础必修课": "from-blue-400 via-blue-200 to-blue-50",
+  "专业核心必修课": "from-amber-400 via-amber-200 to-amber-50",
+  "银行管理方向": "from-indigo-400 via-indigo-200 to-indigo-50",
+};
+
+const TEACHER_NOTES: Record<string, string> = {
+  "31": "建议先掌握货币金融学基础，再进入本课程的案例讨论。",
+  "53": "这门课会用到计量和统计工具，适合愿意动手分析数据的同学。",
+  "60": "实操专题需要保持每周练习，代码能力会直接影响学习体验。",
+  "49": "证券投资学不只看概念，更重要的是建立风险收益的判断框架。",
+  "62": "信贷管理适合想了解银行业务流程和风控逻辑的同学。",
+  "83": "区块链课程适合跨学科探索，建议带着金融应用问题来学习。",
+};
+
+const tagStyle = (tag: string) => {
+  if (tag.includes("热") || tag.includes("满")) return "bg-red-100 text-red-700 border-red-200";
+  if (tag.includes("实操") || tag.includes("编程")) return "bg-blue-100 text-blue-700 border-blue-200";
+  if (tag.includes("闭卷") || tag.includes("难")) return "bg-amber-100 text-amber-700 border-amber-200";
+  if (tag.includes("高绩点")) return "bg-emerald-100 text-emerald-700 border-emerald-200";
+  if (tag.includes("小组") || tag.includes("互动")) return "bg-violet-100 text-violet-700 border-violet-200";
+  return "bg-slate-100 text-slate-700 border-slate-200";
+};
+
+export const CourseDetail = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const course = MOCK_COURSES.find((c) => c.id === id);
+
+  const [isAlt, setIsAlt] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  useEffect(() => {
+    if (course) {
+      setIsAlt(state.alternateCourseIds.has(course.id));
+      setIsCompleted(state.completedCourseIds.has(course.id));
+    }
+  }, [course]);
+
+  if (!course) return <div className="p-24 text-center">Course not found</div>;
+
+  const toggleAlt = () => {
+    if (state.alternateCourseIds.has(course.id)) {
+      state.alternateCourseIds.delete(course.id);
+      setIsAlt(false);
+    } else {
+      state.alternateCourseIds.add(course.id);
+      setIsAlt(true);
+    }
+  };
+
+  const toggleCompleted = () => {
+    if (state.completedCourseIds.has(course.id)) {
+      state.completedCourseIds.delete(course.id);
+      setIsCompleted(false);
+    } else {
+      state.completedCourseIds.add(course.id);
+      setIsCompleted(true);
+    }
+  };
+
+  const gradientClass = CATEGORY_STYLES[course.category] || "from-gray-400 via-gray-200 to-gray-50";
+  const recommendationIndex = Math.round(course.rating * 12 + Math.min(course.students / 80, 35));
+
+  return (
+    <PageWrapper>
+      <div className="min-h-screen bg-gray-50 -mt-2">
+        {/* Dynamic Gradient Header */}
+        <div className={`relative h-96 bg-gradient-to-br ${gradientClass} transition-colors duration-500`}>
+          <div className="absolute top-8 left-5 right-5 flex justify-between z-10">
+            <motion.button 
+              whileTap={{ scale: 0.9 }}
+              onClick={() => navigate(-1)} 
+              className="p-2.5 bg-black/10 backdrop-blur-md rounded-full text-white border border-white/20"
+            >
+              <ArrowLeft size={20} />
+            </motion.button>
+            <div className="flex gap-2">
+               <motion.button 
+                whileTap={{ scale: 0.9 }}
+                className="p-2.5 bg-black/10 backdrop-blur-md rounded-full text-white border border-white/20"
+              >
+                <Share2 size={20} />
+              </motion.button>
+            </div>
+          </div>
+
+          <div className="absolute bottom-16 left-6 right-6 flex flex-col items-center text-center">
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="w-40 h-40 rounded-[32px] overflow-hidden shadow-2xl mb-6 border-4 border-white/40"
+            >
+              <ImageWithFallback src={course.cover} alt={course.name} className="w-full h-full object-cover" />
+            </motion.div>
+            
+            <motion.div
+              initial={{ y: 10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.1 }}
+            >
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/30 backdrop-blur-md rounded-full border border-white/40 text-[10px] text-gray-800 font-black uppercase tracking-wider mb-3">
+                 <Sparkles size={12} className="text-white" />
+                 {course.category}
+              </div>
+              <h1 className="text-2xl font-black text-gray-900 leading-tight mb-1">{course.name}</h1>
+              <p className="text-gray-600 text-[10px] font-bold uppercase tracking-[0.2em]">{course.englishName}</p>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Stats Row */}
+        <div className="px-6 flex justify-around py-6 bg-white/50 backdrop-blur-sm -mt-6 rounded-t-[40px] border-t border-white/50 relative z-10 shadow-[0_-5px_20px_rgba(0,0,0,0.02)]">
+           <div className="text-center">
+             <div className="text-lg font-black text-gray-900">{recommendationIndex}</div>
+             <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">推荐指数</div>
+           </div>
+           <div className="w-px h-8 bg-gray-200/50 mt-1"></div>
+           <div className="text-center">
+             <div className="text-lg font-black text-gray-900">{course.students.toLocaleString()}</div>
+             <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">在学人数</div>
+           </div>
+           <div className="w-px h-8 bg-gray-200/50 mt-1"></div>
+           <div className="text-center">
+             <div className="text-lg font-black text-gray-900">{course.credits}</div>
+             <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">获得学分</div>
+           </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="px-6 pb-8 bg-white flex gap-3">
+          <motion.button 
+            whileTap={{ scale: 0.95 }}
+            onClick={toggleAlt}
+            className={`flex-1 h-14 rounded-2xl flex items-center justify-center gap-2 font-black text-sm transition-all border ${
+              isAlt 
+                ? "bg-red-50 text-red-600 border-red-100" 
+                : "bg-gray-50 text-gray-900 border-gray-100"
+            }`}
+          >
+            <Heart size={18} fill={isAlt ? "currentColor" : "none"} />
+            {isAlt ? "已加入备选" : "加入备选"}
+          </motion.button>
+          <motion.button 
+            whileTap={{ scale: 0.95 }}
+            onClick={toggleCompleted}
+            className={`flex-1 h-14 rounded-2xl flex items-center justify-center gap-2 font-black text-sm transition-all shadow-xl ${
+              isCompleted 
+                ? "bg-green-100 text-green-600 border border-green-200 shadow-none" 
+                : "bg-gray-900 text-white shadow-gray-200"
+            }`}
+          >
+            {isCompleted ? <CheckCircle2 size={18} /> : null}
+            {isCompleted ? "已修完该课" : "标记已修"}
+          </motion.button>
+        </div>
+
+        {/* Info Panel */}
+        <div className="bg-white px-6 pb-24">
+          <div className="flex flex-wrap gap-2 mb-10">
+            {course.tags.map(tag => (
+              <span key={tag} className={`px-3 py-1.5 rounded-xl text-[11px] font-black border ${tagStyle(tag)}`}>
+                #{tag}
+              </span>
+            ))}
+          </div>
+
+          <section className="mb-12">
+            <h2 className="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
+               <div className="w-1.5 h-6 bg-blue-600 rounded-full" />
+               课程简介
+            </h2>
+            <p className="text-gray-500 text-sm leading-relaxed font-medium">
+              {course.intro}
+            </p>
+          </section>
+
+          {TEACHER_NOTES[course.id] && (
+            <section className="mb-12">
+              <h2 className="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
+                <div className="w-1.5 h-6 bg-emerald-500 rounded-full" />
+                老师留言
+              </h2>
+              <div className="rounded-[28px] bg-emerald-50/70 border border-emerald-100 p-5">
+                <p className="text-sm leading-relaxed text-emerald-800 font-bold">
+                  {TEACHER_NOTES[course.id]}
+                </p>
+              </div>
+            </section>
+          )}
+
+          <section className="mb-12">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-black text-gray-900 flex items-center gap-2">
+                 <div className="w-1.5 h-6 bg-amber-500 rounded-full" />
+                 教学大纲
+              </h2>
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{course.outline.length} Modules</span>
+            </div>
+            <div className="space-y-3">
+              {course.outline.map((item, index) => (
+                <div key={index} className="p-5 bg-gray-50/50 rounded-3xl border border-gray-100/50 flex items-center gap-4 group active:bg-gray-100 transition-colors">
+                  <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-[10px] font-black text-gray-400">
+                    {index + 1}
+                  </div>
+                  <span className="text-sm font-black text-gray-700 flex-grow">{item}</span>
+                  <ChevronRight size={16} className="text-gray-300" />
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="mb-12">
+             <h2 className="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
+                <div className="w-1.5 h-6 bg-purple-600 rounded-full" />
+                考核标准
+             </h2>
+             <div className="p-6 bg-blue-50/50 rounded-[32px] border border-blue-100/50 flex items-start gap-4">
+               <div className="w-12 h-12 rounded-[20px] bg-white flex items-center justify-center text-blue-600 shadow-sm flex-shrink-0">
+                  <Award size={24} />
+               </div>
+               <div>
+                  <h4 className="text-sm font-black text-gray-900 mb-1">Final Assessment</h4>
+                  <p className="text-xs text-blue-700/70 font-bold leading-relaxed">{course.assessment}</p>
+               </div>
+             </div>
+          </section>
+
+          <section>
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-lg font-black text-gray-900 flex items-center gap-2">
+                 <div className="w-1.5 h-6 bg-red-500 rounded-full" />
+                 学习反馈
+              </h2>
+            </div>
+            <div className="space-y-8">
+              {course.reviews.map((review) => (
+                <div key={review.id} className="pb-8 border-b border-gray-100 last:border-0">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex gap-3">
+                      <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 border-2 border-white shadow-sm">
+                         <Users size={24} />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-black text-gray-900">{review.author}</h4>
+                        <p className="text-[10px] text-gray-400 font-bold mt-1">修读体验</p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{review.date}</span>
+                  </div>
+                  <p className="text-xs text-gray-500 leading-relaxed font-medium mb-5">
+                    {review.content}
+                  </p>
+                  <div className="flex gap-6">
+                    <button className="flex items-center gap-2 text-[10px] font-black text-gray-400 hover:text-blue-600 transition-colors">
+                      <ThumbsUp size={14} /> {review.likes} Helpful
+                    </button>
+                    <button className="flex items-center gap-2 text-[10px] font-black text-gray-400 hover:text-blue-600 transition-colors">
+                      <MessageCircle size={14} /> 4 Replies
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      </div>
+    </PageWrapper>
+  );
+};
