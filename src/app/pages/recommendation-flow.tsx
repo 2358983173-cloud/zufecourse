@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowLeft, ChevronRight, Compass, Sparkles } from "lucide-react";
 import { MOCK_COURSES, state } from "../data";
+import { persistBackupCourses } from "../course-state";
 
 const QUESTIONS = [
   {
@@ -125,6 +126,7 @@ const buildCareerTree = (answers: Record<string, string>) => {
     .slice(0, 8);
 
   selected.forEach((course) => state.alternateCourseIds.add(course.id));
+  persistBackupCourses();
 
   return {
     ...profile,

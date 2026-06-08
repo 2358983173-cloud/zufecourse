@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   Clock,
   Heart,
+  Bookmark,
   MoreVertical,
   ThumbsUp,
   Sparkles
@@ -19,6 +20,14 @@ import { MOCK_COURSES, state } from "../data";
 import { PageWrapper } from "../components/layout";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { motion, AnimatePresence } from "motion/react";
+import {
+  isBackupCourse,
+  isFavoriteCourse,
+  isSelectedCourse,
+  toggleBackupCourse,
+  toggleFavoriteCourse,
+  toggleSelectedCourse,
+} from "../course-state";
 
 const CATEGORY_STYLES: Record<string, string> = {
   "通识教育必修课": "from-emerald-400 via-emerald-200 to-emerald-50",
@@ -52,34 +61,31 @@ export const CourseDetail = () => {
 
   const [isAlt, setIsAlt] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     if (course) {
-      setIsAlt(state.alternateCourseIds.has(course.id));
-      setIsCompleted(state.completedCourseIds.has(course.id));
+      setIsAlt(isBackupCourse(course.id));
+      setIsCompleted(isSelectedCourse(course.id));
+      setIsFavorite(isFavoriteCourse(course.id));
     }
   }, [course]);
 
   if (!course) return <div className="p-24 text-center">Course not found</div>;
 
   const toggleAlt = () => {
-    if (state.alternateCourseIds.has(course.id)) {
-      state.alternateCourseIds.delete(course.id);
-      setIsAlt(false);
-    } else {
-      state.alternateCourseIds.add(course.id);
-      setIsAlt(true);
-    }
+    toggleBackupCourse(course);
+    setIsAlt(isBackupCourse(course.id));
   };
 
   const toggleCompleted = () => {
-    if (state.completedCourseIds.has(course.id)) {
-      state.completedCourseIds.delete(course.id);
-      setIsCompleted(false);
-    } else {
-      state.completedCourseIds.add(course.id);
-      setIsCompleted(true);
-    }
+    toggleSelectedCourse(course);
+    setIsCompleted(isSelectedCourse(course.id));
+  };
+
+  const toggleFavorite = () => {
+    toggleFavoriteCourse(course);
+    setIsFavorite(isFavoriteCourse(course.id));
   };
 
   const gradientClass = CATEGORY_STYLES[course.category] || "from-gray-400 via-gray-200 to-gray-50";
@@ -151,11 +157,11 @@ export const CourseDetail = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="px-6 pb-8 bg-white flex gap-3">
+        <div className="px-6 pb-8 bg-white grid grid-cols-3 gap-2">
           <motion.button 
             whileTap={{ scale: 0.95 }}
             onClick={toggleAlt}
-            className={`flex-1 h-14 rounded-2xl flex items-center justify-center gap-2 font-black text-sm transition-all border ${
+            className={`h-14 rounded-2xl flex items-center justify-center gap-2 font-black text-xs transition-all border ${
               isAlt 
                 ? "bg-red-50 text-red-600 border-red-100" 
                 : "bg-gray-50 text-gray-900 border-gray-100"
@@ -164,10 +170,20 @@ export const CourseDetail = () => {
             <Heart size={18} fill={isAlt ? "currentColor" : "none"} />
             {isAlt ? "已加入备选" : "加入备选"}
           </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={toggleFavorite}
+            className={`h-14 rounded-2xl flex items-center justify-center gap-2 font-black text-xs border ${
+              isFavorite ? "bg-amber-50 text-amber-600 border-amber-100" : "bg-gray-50 text-gray-900 border-gray-100"
+            }`}
+          >
+            <Bookmark size={18} fill={isFavorite ? "currentColor" : "none"} />
+            {isFavorite ? "已收藏" : "收藏"}
+          </motion.button>
           <motion.button 
             whileTap={{ scale: 0.95 }}
             onClick={toggleCompleted}
-            className={`flex-1 h-14 rounded-2xl flex items-center justify-center gap-2 font-black text-sm transition-all shadow-xl ${
+            className={`h-14 rounded-2xl flex items-center justify-center gap-2 font-black text-xs transition-all shadow-xl ${
               isCompleted 
                 ? "bg-green-100 text-green-600 border border-green-200 shadow-none" 
                 : "bg-gray-900 text-white shadow-gray-200"

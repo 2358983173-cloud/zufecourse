@@ -1,9 +1,17 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
-import { Heart } from "lucide-react";
-import { Course, state } from "../data";
+import { Bookmark, CheckCircle2, Heart } from "lucide-react";
+import { Course } from "../data";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { motion } from "motion/react";
+import {
+  isBackupCourse,
+  isFavoriteCourse,
+  isSelectedCourse,
+  toggleBackupCourse,
+  toggleFavoriteCourse,
+  toggleSelectedCourse,
+} from "../course-state";
 
 const tagStyle = (tag: string) => {
   if (tag.includes("热") || tag.includes("满")) return "bg-red-100 text-red-700 border-red-200";
@@ -42,18 +50,31 @@ export const CourseCard = ({ course }: { course: Course }) => {
 };
 
 export const CourseListItem = ({ course, onToggleAlternate }: { course: Course, onToggleAlternate?: (id: string) => void }) => {
-  const [isAlt, setIsAlt] = useState(state.alternateCourseIds.has(course.id));
+  const [isAlt, setIsAlt] = useState(isBackupCourse(course.id));
+  const [isFavorite, setIsFavorite] = useState(isFavoriteCourse(course.id));
+  const [isSelected, setIsSelected] = useState(isSelectedCourse(course.id));
 
   const toggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (state.alternateCourseIds.has(course.id)) {
-      state.alternateCourseIds.delete(course.id);
-      setIsAlt(false);
-    } else {
-      state.alternateCourseIds.add(course.id);
-      setIsAlt(true);
-    }
+    toggleBackupCourse(course);
+    setIsAlt(isBackupCourse(course.id));
+    onToggleAlternate?.(course.id);
+  };
+
+  const toggleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleFavoriteCourse(course);
+    setIsFavorite(isFavoriteCourse(course.id));
+    onToggleAlternate?.(course.id);
+  };
+
+  const toggleSelected = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleSelectedCourse(course);
+    setIsSelected(isSelectedCourse(course.id));
     onToggleAlternate?.(course.id);
   };
 
@@ -73,12 +94,15 @@ export const CourseListItem = ({ course, onToggleAlternate }: { course: Course, 
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="flex-grow min-w-0 pr-10">
+        <div className="flex-grow min-w-0 pr-24">
           <div className="flex justify-between items-start">
             <h3 className="font-black text-gray-900 text-[15px] leading-tight line-clamp-1">{course.name}</h3>
           </div>
           <p className="text-[11px] text-gray-500 mt-1 font-medium truncate">
-            {course.credits} 学分 · {course.teacher} · {course.students} 人
+            {course.credits} 学分 · {course.category} · {course.teacher}
+          </p>
+          <p className="text-[10px] text-gray-400 mt-1 font-bold truncate">
+            {course.college} · {course.assessment}
           </p>
           <div className="flex flex-wrap gap-1.5 mt-2">
             {course.tags.slice(0, 3).map(tag => (
@@ -91,14 +115,17 @@ export const CourseListItem = ({ course, onToggleAlternate }: { course: Course, 
             ))}
           </div>
         </div>
-        <button 
-          onClick={toggle}
-          className={`absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full transition-all ${
-            isAlt ? "text-red-500 bg-red-50" : "text-gray-300 bg-gray-50 group-hover:text-gray-400"
-          }`}
-        >
-          <Heart size={20} fill={isAlt ? "currentColor" : "none"} />
-        </button>
+        <div className="absolute right-3 top-1/2 flex -translate-y-1/2 gap-1.5">
+          <button onClick={toggleSelected} className={`p-2 rounded-full ${isSelected ? "bg-emerald-50 text-emerald-600" : "bg-gray-50 text-gray-300"}`}>
+            <CheckCircle2 size={17} fill={isSelected ? "currentColor" : "none"} />
+          </button>
+          <button onClick={toggleFavorite} className={`p-2 rounded-full ${isFavorite ? "bg-amber-50 text-amber-600" : "bg-gray-50 text-gray-300"}`}>
+            <Bookmark size={17} fill={isFavorite ? "currentColor" : "none"} />
+          </button>
+          <button onClick={toggle} className={`p-2 rounded-full ${isAlt ? "text-red-500 bg-red-50" : "text-gray-300 bg-gray-50"}`}>
+            <Heart size={17} fill={isAlt ? "currentColor" : "none"} />
+          </button>
+        </div>
       </Link>
     </motion.div>
   );

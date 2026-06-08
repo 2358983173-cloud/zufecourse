@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { ArrowDown, BookOpen, GitBranch, LogOut, RefreshCcw, Sparkles, User } from "lucide-react";
 import { MOCK_COURSES, state } from "../data";
 import { PageWrapper, SchoolMark } from "../components/layout";
+import { getCourseStats } from "../course-state";
 
 const fallbackProfile = {
   archetype: "等待生成",
@@ -18,6 +19,7 @@ const fallbackProfile = {
 export const ProfilePage = () => {
   const navigate = useNavigate();
   const profile = state.recommendationProfile || fallbackProfile;
+  const stats = getCourseStats();
   const expandedStrengths = [
     ...profile.strengths,
     "方向更清楚",
@@ -58,6 +60,36 @@ export const ProfilePage = () => {
               <p className="text-blue-100 font-bold mt-3">{profile.tagline}</p>
               <p className="text-sm leading-relaxed text-white/60 mt-5">{profile.summary}</p>
             </div>
+          </div>
+        </section>
+
+        <section className="px-6 mt-6">
+          <div className="rounded-[30px] bg-white border border-gray-100 p-5 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-black text-gray-900 text-lg">选课进度概览</h2>
+              <span className="text-[10px] font-black text-blue-700">目标 {stats.targetCredits} 学分</span>
+            </div>
+            <div className="grid grid-cols-4 gap-2 text-center">
+              <div className="rounded-2xl bg-blue-50 p-3">
+                <p className="text-lg font-black text-blue-700">{stats.selectedCount}</p>
+                <p className="text-[9px] font-black text-blue-700/60">已选</p>
+              </div>
+              <div className="rounded-2xl bg-amber-50 p-3">
+                <p className="text-lg font-black text-amber-700">{stats.favoriteCount}</p>
+                <p className="text-[9px] font-black text-amber-700/60">收藏</p>
+              </div>
+              <div className="rounded-2xl bg-emerald-50 p-3">
+                <p className="text-lg font-black text-emerald-700">{stats.selectedCredits}</p>
+                <p className="text-[9px] font-black text-emerald-700/60">学分</p>
+              </div>
+              <div className="rounded-2xl bg-slate-50 p-3">
+                <p className="text-lg font-black text-slate-700">{stats.remainingCredits}</p>
+                <p className="text-[9px] font-black text-slate-500">剩余</p>
+              </div>
+            </div>
+            <p className="mt-4 text-xs font-bold text-gray-400">
+              当前方向推荐完成进度：已加入备选 {stats.backupCount} 门，可到备选页继续调整。
+            </p>
           </div>
         </section>
 

@@ -5,8 +5,10 @@ import { useNavigate, useSearchParams } from "react-router";
 import { CATEGORIES, MOCK_COURSES, state } from "../data";
 import { CourseListItem } from "../components/course-items";
 import { PageWrapper, SchoolMark } from "../components/layout";
+import { getFavoriteCourseIds, getSelectedCourseIds } from "../course-state";
 
 type SortMode = "default" | "popular" | "rating";
+type ViewMode = "all" | "selected" | "favorite" | "backup" | "recommended";
 
 const recommendationIndex = (course: { rating: number; students: number }) =>
   Math.round(course.rating * 12 + Math.min(course.students / 80, 35));
@@ -24,6 +26,7 @@ export const CourseList = () => {
   const [selectedCategory, setSelectedCategory] = useState("全部");
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") ?? "");
   const [refresh, setRefresh] = useState(0);
+  const [viewMode, setViewMode] = useState<ViewMode>("all");
   const targetCredits = 22;
   const selectedCredits = useMemo(
     () =>
@@ -38,6 +41,15 @@ export const CourseList = () => {
   const filteredCourses = useMemo(() => {
     const keyword = searchQuery.trim().toLowerCase();
     const list = MOCK_COURSES.filter((course) => {
+      const selectedIds = getSelectedCourseIds();
+      const favoriteIds = getFavoriteCourseIds();
+      if (viewMode === "selected" && !selectedIds.has(course.id)) return false;
+      if (viewMode === "favorite" && !favoriteIds.has(course.id)) return false;
+      if (viewMode === "backup" && !state.alternateCourseIds.has(course.id)) return false;
+      if (viewMode === "recommended" && state.recommendationProfile) {
+        const names = state.recommendationProfile.careerTree.flatMap((node) => node.courses);
+        if (!names.includes(course.name)) return false;
+      }
       const matchesCategory = selectedCategory === "全部" || course.category === selectedCategory;
       const matchesSearch =
         !keyword ||
@@ -58,12 +70,19 @@ export const CourseList = () => {
       if (!aIsAlt && bIsAlt) return 1;
       return Number(a.id) - Number(b.id);
     });
-  }, [selectedCategory, searchQuery, refresh, sortMode]);
+  }, [selectedCategory, searchQuery, refresh, sortMode, viewMode]);
 
   const sortOptions: Array<{ id: SortMode; label: string }> = [
     { id: "default", label: "默认" },
     { id: "popular", label: "热度" },
     { id: "rating", label: "指数" },
+  ];
+  const viewOptions: Array<{ id: ViewMode; label: string }> = [
+    { id: "all", label: "全部" },
+    { id: "selected", label: "已选" },
+    { id: "favorite", label: "收藏" },
+    { id: "backup", label: "备选" },
+    { id: "recommended", label: "推荐" },
   ];
 
   return (
@@ -111,6 +130,20 @@ export const CourseList = () => {
               onClick={() => setSortMode(option.id)}
               className={`h-10 rounded-xl text-xs font-black transition-all ${
                 sortMode === option.id ? "bg-[#173b83] text-white shadow-sm" : "text-gray-400"
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-5 gap-1.5 mb-4">
+          {viewOptions.map((option) => (
+            <button
+              key={option.id}
+              onClick={() => setViewMode(option.id)}
+              className={`h-9 rounded-xl text-[11px] font-black transition-all ${
+                viewMode === option.id ? "bg-blue-50 text-blue-700 border border-blue-100" : "bg-white text-gray-400 border border-gray-100"
               }`}
             >
               {option.label}

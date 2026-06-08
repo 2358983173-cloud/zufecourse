@@ -1,14 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RouterProvider } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { router } from "./routes";
 import "../styles/theme.css";
 import zufeLogo from "../assets/zufe-logo.webp";
+import { initializeCourseState } from "./course-state";
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
 
   const enterApp = () => setShowSplash(false);
+
+  useEffect(() => {
+    initializeCourseState();
+  }, []);
 
   return (
     <>

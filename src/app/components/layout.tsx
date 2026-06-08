@@ -1,8 +1,9 @@
 import React from "react";
-import { NavLink } from "react-router";
-import { BookOpen, CalendarDays, Home, User } from "lucide-react";
+import { NavLink, useNavigate } from "react-router";
+import { BookOpen, CalendarDays, ChevronUp, Home, User } from "lucide-react";
 import { motion } from "motion/react";
 import zufeLogo from "../../assets/zufe-logo.webp";
+import { COURSE_STATE_EVENT, getCourseStats } from "../course-state";
 
 export const SchoolMark = ({ compact = false }: { compact?: boolean }) => {
   return (
@@ -60,6 +61,64 @@ export const BottomNav = () => {
   );
 };
 
+export const FloatingCreditBar = () => {
+  const navigate = useNavigate();
+  const [open, setOpen] = React.useState(false);
+  const [stats, setStats] = React.useState(getCourseStats());
+
+  React.useEffect(() => {
+    const update = () => setStats(getCourseStats());
+    window.addEventListener(COURSE_STATE_EVENT, update);
+    window.addEventListener("storage", update);
+    return () => {
+      window.removeEventListener(COURSE_STATE_EVENT, update);
+      window.removeEventListener("storage", update);
+    };
+  }, []);
+
+  const statusText = stats.exceededCredits
+    ? `已超出 ${stats.exceededCredits} 学分`
+    : stats.remainingCredits === 0
+      ? "学分已满足"
+      : `还差 ${stats.remainingCredits} 学分`;
+  const statusColor = stats.exceededCredits ? "text-amber-600" : "text-blue-700";
+
+  return (
+    <div className="fixed left-1/2 bottom-[86px] z-40 w-full max-w-md -translate-x-1/2 px-4">
+      {open && (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-3 rounded-[24px] border border-blue-100 bg-white/95 p-4 shadow-xl shadow-blue-900/10 backdrop-blur-md"
+        >
+          <div className="grid grid-cols-3 gap-3 text-center">
+            <div><p className="text-lg font-black text-gray-900">{stats.targetCredits}</p><p className="text-[10px] font-bold text-gray-400">目标</p></div>
+            <div><p className="text-lg font-black text-gray-900">{stats.selectedCredits}</p><p className="text-[10px] font-bold text-gray-400">已选</p></div>
+            <div><p className={`text-lg font-black ${statusColor}`}>{stats.exceededCredits || stats.remainingCredits}</p><p className="text-[10px] font-bold text-gray-400">{stats.exceededCredits ? "超出" : "剩余"}</p></div>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <button onClick={() => navigate("/heat")} className="h-10 rounded-2xl bg-blue-50 text-xs font-black text-blue-700">查看备选</button>
+            <button onClick={() => navigate("/courses")} className="h-10 rounded-2xl bg-gray-900 text-xs font-black text-white">去调整</button>
+          </div>
+        </motion.div>
+      )}
+      <button
+        onClick={() => setOpen((value) => !value)}
+        className="flex w-full items-center justify-between rounded-[22px] border border-white/70 bg-white/88 px-4 py-3 shadow-xl shadow-blue-900/10 backdrop-blur-md"
+      >
+        <div className="text-left">
+          <p className="text-[10px] font-black uppercase tracking-widest text-blue-700">Credit Plan</p>
+          <p className="text-sm font-black text-gray-900">已选 {stats.selectedCredits} / 目标 {stats.targetCredits} 学分</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className={`text-xs font-black ${statusColor}`}>{statusText}</span>
+          <ChevronUp size={16} className={`text-blue-700 transition-transform ${open ? "rotate-180" : ""}`} />
+        </div>
+      </button>
+    </div>
+  );
+};
+
 export const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <motion.div
@@ -70,6 +129,7 @@ export const PageWrapper = ({ children }: { children: React.ReactNode }) => {
       className="pb-24 min-h-screen bg-gray-50"
     >
       {children}
+      <FloatingCreditBar />
     </motion.div>
   );
 };
