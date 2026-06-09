@@ -2,16 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import { 
   ArrowLeft, 
-  Users, 
   Award, 
   BookOpen, 
-  MessageCircle, 
   ChevronRight, 
   Clock,
   Heart,
   Bookmark,
-  MoreVertical,
-  ThumbsUp,
   Sparkles
 } from "lucide-react";
 import { MOCK_COURSES, state } from "../data";
@@ -24,6 +20,7 @@ import {
   toggleFavoriteCourse,
   toggleSelectedCourse,
 } from "../course-state";
+import { CommentSection } from "../components/comment-section";
 
 const CATEGORY_STYLES: Record<string, string> = {
   "通识": "from-emerald-400 via-emerald-200 to-emerald-50",
@@ -245,43 +242,7 @@ export const CourseDetail = () => {
              </div>
           </section>
 
-          <section>
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-lg font-black text-gray-900 flex items-center gap-2">
-                 <div className="w-1.5 h-6 bg-red-500 rounded-full" />
-                 学习反馈
-              </h2>
-            </div>
-            <div className="space-y-8">
-              {course.reviews.map((review) => (
-                <div key={review.id} className="pb-8 border-b border-gray-100 last:border-0">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex gap-3">
-                      <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 border-2 border-white shadow-sm">
-                         <Users size={24} />
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-black text-gray-900">{review.author}</h4>
-                        <p className="text-[10px] text-gray-400 font-bold mt-1">修读体验</p>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{review.date}</span>
-                  </div>
-                  <p className="text-xs text-gray-500 leading-relaxed font-medium mb-5">
-                    {review.content}
-                  </p>
-                  <div className="flex gap-6">
-                    <button className="flex items-center gap-2 text-[10px] font-black text-gray-400 hover:text-blue-600 transition-colors">
-                      <ThumbsUp size={14} /> {review.likes} Helpful
-                    </button>
-                    <button className="flex items-center gap-2 text-[10px] font-black text-gray-400 hover:text-blue-600 transition-colors">
-                      <MessageCircle size={14} /> 4 Replies
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
+          <CommentSection courseId={course.id} />
         </div>
       </div>
     </PageWrapper>

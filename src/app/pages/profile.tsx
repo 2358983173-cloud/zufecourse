@@ -5,6 +5,7 @@ import { state } from "../data";
 import { PageWrapper, SchoolMark } from "../components/layout";
 import { getCourseStats } from "../course-state";
 import { clearCareerResult, getCareerReport, loadCareerResult } from "../career-storage";
+import { clearAuth } from "../api";
 
 export const ProfilePage = () => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export const ProfilePage = () => {
   const stats = getCourseStats();
 
   const handleLogout = () => {
+    clearAuth();
     state.isLoggedIn = false;
     navigate("/");
   };

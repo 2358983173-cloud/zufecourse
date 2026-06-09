@@ -5,6 +5,8 @@ import { router } from "./routes";
 import "../styles/theme.css";
 import zufeLogo from "../assets/zufe-logo.webp";
 import { initializeCourseState } from "./course-state";
+import { getAuthUser } from "./api";
+import { state } from "./data";
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -13,6 +15,11 @@ function App() {
 
   useEffect(() => {
     initializeCourseState();
+    const user = getAuthUser();
+    if (user) {
+      state.isLoggedIn = true;
+      state.user.name = user.nickname;
+    }
   }, []);
 
   return (
