@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
-import { Bookmark, CheckCircle2, Heart } from "lucide-react";
+import { Bookmark, Heart } from "lucide-react";
 import { Course } from "../data";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { motion } from "motion/react";
 import {
-  isBackupCourse,
   isFavoriteCourse,
   isSelectedCourse,
-  toggleBackupCourse,
   toggleFavoriteCourse,
   toggleSelectedCourse,
 } from "../course-state";
@@ -49,25 +47,16 @@ export const CourseCard = ({ course }: { course: Course }) => {
   );
 };
 
-export const CourseListItem = ({ course, onToggleAlternate }: { course: Course, onToggleAlternate?: (id: string) => void }) => {
-  const [isAlt, setIsAlt] = useState(isBackupCourse(course.id));
+export const CourseListItem = ({ course, onStateChange }: { course: Course, onStateChange?: (id: string) => void }) => {
   const [isFavorite, setIsFavorite] = useState(isFavoriteCourse(course.id));
   const [isSelected, setIsSelected] = useState(isSelectedCourse(course.id));
-
-  const toggle = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    toggleBackupCourse(course);
-    setIsAlt(isBackupCourse(course.id));
-    onToggleAlternate?.(course.id);
-  };
 
   const toggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     toggleFavoriteCourse(course);
     setIsFavorite(isFavoriteCourse(course.id));
-    onToggleAlternate?.(course.id);
+    onStateChange?.(course.id);
   };
 
   const toggleSelected = (e: React.MouseEvent) => {
@@ -75,7 +64,7 @@ export const CourseListItem = ({ course, onToggleAlternate }: { course: Course, 
     e.stopPropagation();
     toggleSelectedCourse(course);
     setIsSelected(isSelectedCourse(course.id));
-    onToggleAlternate?.(course.id);
+    onStateChange?.(course.id);
   };
 
   return (
@@ -85,16 +74,16 @@ export const CourseListItem = ({ course, onToggleAlternate }: { course: Course, 
     >
       <Link
         to={`/course/${course.id}`}
-        className="flex items-center gap-4 p-4 transition-colors"
+        className="flex items-center gap-3 p-3 transition-colors"
       >
-        <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 shadow-sm">
+        <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 shadow-sm">
           <ImageWithFallback
             src={course.cover}
             alt={course.name}
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="flex-grow min-w-0 pr-24">
+        <div className="flex-grow min-w-0 pr-16">
           <div className="flex justify-between items-start">
             <h3 className="font-black text-gray-900 text-[15px] leading-tight line-clamp-1">{course.name}</h3>
           </div>
@@ -104,8 +93,8 @@ export const CourseListItem = ({ course, onToggleAlternate }: { course: Course, 
           <p className="text-[10px] text-gray-400 mt-1 font-bold truncate">
             {course.college} · {course.assessment}
           </p>
-          <div className="flex flex-wrap gap-1.5 mt-2">
-            {course.tags.slice(0, 3).map(tag => (
+          <div className="flex flex-wrap gap-1 mt-2">
+            {course.tags.slice(0, 2).map(tag => (
               <span 
                 key={tag} 
                 className={`text-[10px] px-2 py-1 rounded-full border font-black ${tagStyle(tag)}`}
@@ -115,15 +104,12 @@ export const CourseListItem = ({ course, onToggleAlternate }: { course: Course, 
             ))}
           </div>
         </div>
-        <div className="absolute right-3 top-1/2 flex -translate-y-1/2 gap-1.5">
-          <button onClick={toggleSelected} className={`p-2 rounded-full ${isSelected ? "bg-emerald-50 text-emerald-600" : "bg-gray-50 text-gray-300"}`}>
-            <CheckCircle2 size={17} fill={isSelected ? "currentColor" : "none"} />
+        <div className="absolute right-3 top-1/2 flex -translate-y-1/2 flex-col gap-1.5">
+          <button title="已选课程" onClick={toggleSelected} className={`p-2 rounded-full ${isSelected ? "bg-red-50 text-red-500" : "bg-gray-50 text-gray-300"}`}>
+            <Heart size={17} fill={isSelected ? "currentColor" : "none"} />
           </button>
-          <button onClick={toggleFavorite} className={`p-2 rounded-full ${isFavorite ? "bg-amber-50 text-amber-600" : "bg-gray-50 text-gray-300"}`}>
+          <button title="收藏课程" onClick={toggleFavorite} className={`p-2 rounded-full ${isFavorite ? "bg-amber-50 text-amber-600" : "bg-gray-50 text-gray-300"}`}>
             <Bookmark size={17} fill={isFavorite ? "currentColor" : "none"} />
-          </button>
-          <button onClick={toggle} className={`p-2 rounded-full ${isAlt ? "text-red-500 bg-red-50" : "text-gray-300 bg-gray-50"}`}>
-            <Heart size={17} fill={isAlt ? "currentColor" : "none"} />
           </button>
         </div>
       </Link>

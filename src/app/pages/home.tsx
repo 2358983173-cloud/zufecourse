@@ -12,10 +12,11 @@ import {
 } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { motion } from "motion/react";
-import { MOCK_COURSES, state } from "../data";
+import { MOCK_COURSES } from "../data";
 import { CourseListItem } from "../components/course-items";
 import { PageWrapper, SchoolMark } from "../components/layout";
 import { getCareerReport, loadCareerResult } from "../career-storage";
+import { getCourseStats } from "../course-state";
 
 const directionProfiles = [
   { icon: ChartNoAxesCombined, title: "投资研究", detail: "市场判断与分析", color: "bg-blue-100 text-blue-700" },
@@ -33,14 +34,7 @@ export const Home = () => {
     []
   );
 
-  const alternateCredits = useMemo(
-    () =>
-      MOCK_COURSES.filter((course) => state.alternateCourseIds.has(course.id)).reduce(
-        (total, course) => total + course.credits,
-        0
-      ),
-    []
-  );
+  const selectedCredits = getCourseStats().selectedCredits;
 
   const profileName = getCareerReport(loadCareerResult()).title || "方向待确认";
 
@@ -51,34 +45,38 @@ export const Home = () => {
 
   return (
     <PageWrapper>
-      <header className="px-6 pt-10 pb-4 bg-gray-50/95 backdrop-blur-md sticky top-0 z-20">
-        <SchoolMark compact />
-        <form onSubmit={handleSearch} className="relative mt-6">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+      <header className="px-5 pt-4 pb-3 bg-gray-50/95 backdrop-blur-md sticky top-0 z-20">
+        <div className="flex items-center gap-3">
+          <div className="flex-shrink-0">
+            <SchoolMark compact />
+          </div>
+        <form onSubmit={handleSearch} className="relative flex-1 min-w-0">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
           <input
             type="text"
             value={searchValue}
             onChange={(event) => setSearchValue(event.target.value)}
-            placeholder="搜索课程、方向或老师..."
-            className="w-full h-14 pl-12 pr-4 bg-white rounded-2xl border-none shadow-sm text-sm font-medium focus:ring-2 focus:ring-blue-500/10 placeholder:text-gray-300"
+            placeholder="搜索课程"
+            className="w-full h-10 pl-9 pr-3 bg-white rounded-xl border-none shadow-sm text-xs font-medium focus:ring-2 focus:ring-blue-500/10 placeholder:text-gray-300"
           />
           <button type="submit" className="hidden">搜索</button>
         </form>
+        </div>
       </header>
 
-      <section className="px-6 mt-5">
+      <section className="px-5 mt-3">
         <motion.button
           whileTap={{ scale: 0.98 }}
           onClick={() => navigate("/courses")}
-          className="w-full min-h-44 rounded-[30px] bg-[#173b83] text-white p-6 text-left shadow-xl shadow-blue-900/15 relative overflow-hidden"
+          className="w-full min-h-32 rounded-[24px] bg-[#173b83] text-white p-5 text-left shadow-lg shadow-blue-900/15 relative overflow-hidden"
         >
           <div className="absolute right-[-32px] bottom-[-54px] w-44 h-44 rounded-full border-[26px] border-white/10" />
           <div className="relative max-w-[76%]">
-            <div className="w-11 h-11 rounded-2xl bg-white/12 flex items-center justify-center mb-5">
+            <div className="w-9 h-9 rounded-xl bg-white/12 flex items-center justify-center mb-3">
               <BookOpen size={23} />
             </div>
             <p className="text-[11px] font-black text-blue-100">课程库</p>
-            <h1 className="text-2xl font-black mt-2 leading-tight">查看全部课程</h1>
+            <h1 className="text-xl font-black mt-1 leading-tight">查看全部课程</h1>
             <p className="text-xs text-white/65 font-medium mt-2 leading-relaxed">
               共 {MOCK_COURSES.length} 门课程，可按方向、热度和标签筛选。
             </p>
@@ -87,30 +85,30 @@ export const Home = () => {
         </motion.button>
       </section>
 
-      <section className="px-6 mt-5 grid grid-cols-2 gap-3">
+      <section className="px-5 mt-3 grid grid-cols-2 gap-3">
         <button
           onClick={() => navigate("/recommendation")}
-          className="min-h-28 rounded-[24px] bg-white border border-gray-100 p-4 text-left shadow-sm"
+          className="min-h-24 rounded-[20px] bg-white border border-gray-100 p-4 text-left shadow-sm"
         >
           <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
             <ClipboardList size={19} />
           </div>
-          <h2 className="font-black text-gray-900 mt-4">方向问卷</h2>
+          <h2 className="font-black text-gray-900 mt-3">方向问卷</h2>
           <p className="text-[11px] text-gray-400 font-bold mt-1">重新梳理选课偏好</p>
         </button>
         <button
           onClick={() => navigate("/heat")}
-          className="min-h-28 rounded-[24px] bg-white border border-gray-100 p-4 text-left shadow-sm"
+          className="min-h-24 rounded-[20px] bg-white border border-gray-100 p-4 text-left shadow-sm"
         >
           <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
             <BookOpen size={19} />
           </div>
-          <h2 className="font-black text-gray-900 mt-4">备选课程</h2>
-          <p className="text-[11px] text-gray-400 font-bold mt-1">已选 {alternateCredits} 学分</p>
+          <h2 className="font-black text-gray-900 mt-3">课程安排</h2>
+          <p className="text-[11px] text-gray-400 font-bold mt-1">已选 {selectedCredits} 学分</p>
         </button>
       </section>
 
-      <section className="px-6 mt-8">
+      <section className="px-5 mt-6">
         <div className="flex items-center justify-between mb-4">
           <div>
             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Career Profile</p>
@@ -118,10 +116,10 @@ export const Home = () => {
           </div>
           <Link to="/profile" className="text-[11px] font-black text-blue-700">查看规划</Link>
         </div>
-        <div className="rounded-[28px] bg-white border border-gray-100 shadow-sm p-5">
+        <div className="rounded-[22px] bg-white border border-gray-100 shadow-sm p-4">
           <div className="flex items-center gap-4 pb-5 border-b border-gray-100">
-            <div className="w-16 h-16 rounded-[22px] bg-blue-50 text-[#173b83] flex items-center justify-center relative">
-              <UserRound size={34} />
+            <div className="w-14 h-14 rounded-[18px] bg-blue-50 text-[#173b83] flex items-center justify-center relative">
+              <UserRound size={30} />
               <span className="absolute -right-1 -bottom-1 w-6 h-6 rounded-full bg-amber-400 border-4 border-white" />
             </div>
             <div className="min-w-0">
@@ -150,7 +148,7 @@ export const Home = () => {
         </div>
       </section>
 
-      <section className="mt-9 px-6 pb-20">
+      <section className="mt-6 px-5 pb-20">
         <div className="flex justify-between items-center mb-5">
           <h2 className="font-black text-gray-900 text-lg flex items-center gap-2">
             <Trophy size={20} className="text-amber-500" />

@@ -2,13 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import { 
   ArrowLeft, 
-  Share2, 
   Users, 
   Award, 
   BookOpen, 
   MessageCircle, 
   ChevronRight, 
-  CheckCircle2,
   Clock,
   Heart,
   Bookmark,
@@ -21,10 +19,8 @@ import { PageWrapper } from "../components/layout";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  isBackupCourse,
   isFavoriteCourse,
   isSelectedCourse,
-  toggleBackupCourse,
   toggleFavoriteCourse,
   toggleSelectedCourse,
 } from "../course-state";
@@ -59,24 +55,17 @@ export const CourseDetail = () => {
   const navigate = useNavigate();
   const course = MOCK_COURSES.find((c) => c.id === id);
 
-  const [isAlt, setIsAlt] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     if (course) {
-      setIsAlt(isBackupCourse(course.id));
       setIsCompleted(isSelectedCourse(course.id));
       setIsFavorite(isFavoriteCourse(course.id));
     }
   }, [course]);
 
   if (!course) return <div className="p-24 text-center">Course not found</div>;
-
-  const toggleAlt = () => {
-    toggleBackupCourse(course);
-    setIsAlt(isBackupCourse(course.id));
-  };
 
   const toggleCompleted = () => {
     toggleSelectedCourse(course);
@@ -95,7 +84,7 @@ export const CourseDetail = () => {
     <PageWrapper>
       <div className="min-h-screen bg-gray-50 -mt-2">
         {/* Dynamic Gradient Header */}
-        <div className={`relative h-96 bg-gradient-to-br ${gradientClass} transition-colors duration-500`}>
+        <div className={`relative h-72 bg-gradient-to-br ${gradientClass} transition-colors duration-500`}>
           <div className="absolute top-8 left-5 right-5 flex justify-between z-10">
             <motion.button 
               whileTap={{ scale: 0.9 }}
@@ -104,21 +93,13 @@ export const CourseDetail = () => {
             >
               <ArrowLeft size={20} />
             </motion.button>
-            <div className="flex gap-2">
-               <motion.button 
-                whileTap={{ scale: 0.9 }}
-                className="p-2.5 bg-black/10 backdrop-blur-md rounded-full text-white border border-white/20"
-              >
-                <Share2 size={20} />
-              </motion.button>
-            </div>
           </div>
 
-          <div className="absolute bottom-16 left-6 right-6 flex flex-col items-center text-center">
+          <div className="absolute bottom-8 left-5 right-5 flex items-center gap-4">
             <motion.div 
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="w-40 h-40 rounded-[32px] overflow-hidden shadow-2xl mb-6 border-4 border-white/40"
+              className="w-24 h-24 rounded-[22px] overflow-hidden shadow-xl border-4 border-white/40 flex-shrink-0"
             >
               <ImageWithFallback src={course.cover} alt={course.name} className="w-full h-full object-cover" />
             </motion.div>
@@ -128,18 +109,18 @@ export const CourseDetail = () => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
             >
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/30 backdrop-blur-md rounded-full border border-white/40 text-[10px] text-gray-800 font-black uppercase tracking-wider mb-3">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/30 backdrop-blur-md rounded-full border border-white/40 text-[10px] text-gray-800 font-black mb-2">
                  <Sparkles size={12} className="text-white" />
                  {course.category}
               </div>
-              <h1 className="text-2xl font-black text-gray-900 leading-tight mb-1">{course.name}</h1>
+              <h1 className="text-xl font-black text-gray-900 leading-tight mb-1">{course.name}</h1>
               <p className="text-gray-600 text-[10px] font-bold uppercase tracking-[0.2em]">{course.englishName}</p>
             </motion.div>
           </div>
         </div>
 
         {/* Stats Row */}
-        <div className="px-6 flex justify-around py-6 bg-white/50 backdrop-blur-sm -mt-6 rounded-t-[40px] border-t border-white/50 relative z-10 shadow-[0_-5px_20px_rgba(0,0,0,0.02)]">
+        <div className="px-5 flex justify-around py-4 bg-white/70 backdrop-blur-sm -mt-3 rounded-t-[24px] border-t border-white/50 relative z-10">
            <div className="text-center">
              <div className="text-lg font-black text-gray-900">{recommendationIndex}</div>
              <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">推荐指数</div>
@@ -157,18 +138,18 @@ export const CourseDetail = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="px-6 pb-8 bg-white grid grid-cols-3 gap-2">
+        <div className="px-5 pb-5 bg-white grid grid-cols-2 gap-2">
           <motion.button 
             whileTap={{ scale: 0.95 }}
-            onClick={toggleAlt}
+            onClick={toggleCompleted}
             className={`h-14 rounded-2xl flex items-center justify-center gap-2 font-black text-xs transition-all border ${
-              isAlt 
+              isCompleted
                 ? "bg-red-50 text-red-600 border-red-100" 
                 : "bg-gray-50 text-gray-900 border-gray-100"
             }`}
           >
-            <Heart size={18} fill={isAlt ? "currentColor" : "none"} />
-            {isAlt ? "已加入备选" : "加入备选"}
+            <Heart size={18} fill={isCompleted ? "currentColor" : "none"} />
+            {isCompleted ? "已选课程" : "加入已选"}
           </motion.button>
           <motion.button
             whileTap={{ scale: 0.95 }}
@@ -180,23 +161,11 @@ export const CourseDetail = () => {
             <Bookmark size={18} fill={isFavorite ? "currentColor" : "none"} />
             {isFavorite ? "已收藏" : "收藏"}
           </motion.button>
-          <motion.button 
-            whileTap={{ scale: 0.95 }}
-            onClick={toggleCompleted}
-            className={`h-14 rounded-2xl flex items-center justify-center gap-2 font-black text-xs transition-all shadow-xl ${
-              isCompleted 
-                ? "bg-green-100 text-green-600 border border-green-200 shadow-none" 
-                : "bg-gray-900 text-white shadow-gray-200"
-            }`}
-          >
-            {isCompleted ? <CheckCircle2 size={18} /> : null}
-            {isCompleted ? "已修完该课" : "标记已修"}
-          </motion.button>
         </div>
 
         {/* Info Panel */}
-        <div className="bg-white px-6 pb-24">
-          <div className="flex flex-wrap gap-2 mb-10">
+        <div className="bg-white px-5 pb-24">
+          <div className="flex flex-wrap gap-2 mb-6">
             {course.tags.map(tag => (
               <span key={tag} className={`px-3 py-1.5 rounded-xl text-[11px] font-black border ${tagStyle(tag)}`}>
                 #{tag}
@@ -204,7 +173,7 @@ export const CourseDetail = () => {
             ))}
           </div>
 
-          <section className="mb-12">
+          <section className="mb-8">
             <h2 className="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
                <div className="w-1.5 h-6 bg-blue-600 rounded-full" />
                课程简介
@@ -215,7 +184,7 @@ export const CourseDetail = () => {
           </section>
 
           {TEACHER_NOTES[course.id] && (
-            <section className="mb-12">
+            <section className="mb-8">
               <h2 className="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
                 <div className="w-1.5 h-6 bg-emerald-500 rounded-full" />
                 老师留言
@@ -228,7 +197,7 @@ export const CourseDetail = () => {
             </section>
           )}
 
-          <section className="mb-12">
+          <section className="mb-8">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-black text-gray-900 flex items-center gap-2">
                  <div className="w-1.5 h-6 bg-amber-500 rounded-full" />
@@ -238,7 +207,7 @@ export const CourseDetail = () => {
             </div>
             <div className="space-y-3">
               {course.outline.map((item, index) => (
-                <div key={index} className="p-5 bg-gray-50/50 rounded-3xl border border-gray-100/50 flex items-center gap-4 group active:bg-gray-100 transition-colors">
+                <div key={index} className="p-4 bg-gray-50/50 rounded-2xl border border-gray-100/50 flex items-center gap-3 group active:bg-gray-100 transition-colors">
                   <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-[10px] font-black text-gray-400">
                     {index + 1}
                   </div>
@@ -249,7 +218,7 @@ export const CourseDetail = () => {
             </div>
           </section>
 
-          <section className="mb-12">
+          <section className="mb-8">
              <h2 className="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
                 <div className="w-1.5 h-6 bg-purple-600 rounded-full" />
                 考核标准

@@ -4,6 +4,8 @@ import { AnimatePresence, motion } from "motion/react";
 import { ArrowLeft, ChevronRight, Compass, Sparkles } from "lucide-react";
 import { careerQuizQuestions } from "../career-quiz-questions";
 import { saveCareerResult } from "../career-storage";
+import { getCareerReport } from "../career-storage";
+import { addSelectedCourses } from "../course-state";
 
 export const RecommendationFlow = () => {
   const navigate = useNavigate();
@@ -17,7 +19,8 @@ export const RecommendationFlow = () => {
       setCurrentStep((step) => step + 1);
       return;
     }
-    saveCareerResult(answers);
+    const result = saveCareerResult(answers);
+    addSelectedCourses(getCareerReport(result).matchedCourses);
     navigate("/recommendation-result");
   };
 
@@ -45,7 +48,7 @@ export const RecommendationFlow = () => {
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-[10px] font-black uppercase tracking-widest text-blue-200">浙江财经大学 · 金融学</p>
-            <h1 className="mt-2 text-xl font-black">用 10 个问题梳理职业方向</h1>
+            <h1 className="mt-2 text-xl font-black">用 6 个简单问题梳理职业方向</h1>
             <p className="mt-2 text-xs font-medium leading-relaxed text-white/65">
               测评会生成职业类型、成长树和课程路径，结果仅作为选课参考。
             </p>

@@ -20,7 +20,7 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f7f9fc] flex flex-col justify-center p-8 relative overflow-hidden">
+    <div className="min-h-screen bg-[#f7f9fc] flex flex-col justify-center p-6 relative overflow-hidden">
       <div className="absolute top-[-12%] right-[-18%] w-72 h-72 bg-blue-200/25 rounded-full blur-3xl" />
       <div className="absolute bottom-[-10%] left-[-12%] w-72 h-72 bg-emerald-200/20 rounded-full blur-3xl" />
 
@@ -30,17 +30,17 @@ export const LoginPage = () => {
         transition={{ duration: 0.45 }}
         className="w-full max-w-sm mx-auto relative"
       >
-        <div className="mb-10">
+        <div className="mb-7">
           <SchoolMark />
-          <div className="mt-8">
+          <div className="mt-5">
             <p className="text-[11px] font-black text-blue-700 uppercase tracking-widest">
               ZUFE Finance
             </p>
-            <h1 className="text-3xl font-black text-gray-900 tracking-normal mt-3 leading-tight">
+            <h1 className="text-2xl font-black text-gray-900 tracking-normal mt-2 leading-tight">
               一人一规划，精准生成课程路径
             </h1>
             <p className="text-sm text-gray-500 font-medium mt-3 leading-relaxed">
-              登录后先完成智能问卷，再生成你的备选课程、职业树与模拟课表。
+              登录后完成方向测评，再生成已选课程、职业树与模拟课表。
             </p>
           </div>
         </div>

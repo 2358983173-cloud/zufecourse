@@ -32,12 +32,12 @@ const CATEGORY_ICONS: Record<string, any> = {
 export const CategoryPage = () => {
   return (
     <PageWrapper>
-      <header className="px-6 pt-10 pb-6 bg-white sticky top-0 z-20 border-b border-gray-50/50">
-        <h1 className="text-2xl font-black text-gray-900">课程分类</h1>
+      <header className="px-5 pt-5 pb-4 bg-white sticky top-0 z-20 border-b border-gray-50/50">
+        <h1 className="text-xl font-black text-gray-900">课程分类</h1>
         <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mt-1">Browse by Category</p>
       </header>
 
-      <div className="p-6 grid grid-cols-1 gap-4">
+      <div className="p-5 grid grid-cols-1 gap-3">
         {CATEGORIES.filter(c => c !== "全部").map((cat, idx) => {
           const Icon = CATEGORY_ICONS[cat] || Flame;
           return (
@@ -49,10 +49,10 @@ export const CategoryPage = () => {
             >
               <Link
                 to={`/courses?category=${cat}`}
-                className="group bg-white p-5 rounded-[32px] shadow-sm border border-gray-100 flex items-center gap-5 active:scale-[0.98] transition-all"
+                className="group bg-white p-4 rounded-[20px] shadow-sm border border-gray-100 flex items-center gap-4 active:scale-[0.98] transition-all"
               >
-                <div className="w-14 h-14 rounded-[22px] bg-gray-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
-                  <Icon size={28} />
+                <div className="w-11 h-11 rounded-[15px] bg-gray-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                  <Icon size={22} />
                 </div>
                 <div className="flex-grow">
                   <h3 className="font-black text-gray-900 text-lg">{cat}</h3>
@@ -68,11 +68,11 @@ export const CategoryPage = () => {
       </div>
 
       <section className="px-6 mt-6 pb-12">
-         <div className="bg-blue-600 rounded-[40px] p-8 text-white relative overflow-hidden shadow-xl shadow-blue-100">
+         <div className="bg-blue-600 rounded-[24px] p-5 text-white relative overflow-hidden shadow-xl shadow-blue-100">
             <div className="absolute top-[-20%] right-[-10%] w-40 h-40 bg-white/10 rounded-full blur-2xl" />
             <h2 className="text-xl font-black mb-2 leading-tight">不知道选什么？</h2>
             <p className="text-xs text-blue-100/80 mb-6 leading-relaxed">
-               试试我们的 AI 智能选课，<br/>只需 1 分钟即可匹配最适合你的课程。
+               完成职业方向测评，快速整理适合你的课程路径。
             </p>
             <Link 
               to="/recommendation"

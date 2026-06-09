@@ -2,9 +2,8 @@ import React, { useMemo, useState } from "react";
 import { CalendarDays, CheckCircle2, Clock, Loader2, MapPin, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
-import { MOCK_COURSES } from "../data";
 import { PageWrapper, SchoolMark } from "../components/layout";
-import { getBackupCourses, getCourseStats, toggleBackupCourse } from "../course-state";
+import { getSelectedCourses, getCourseStats, toggleSelectedCourse } from "../course-state";
 
 const DAYS = ["周一", "周二", "周三", "周四", "周五"];
 const TIMES = ["8:00", "9:55", "13:30", "15:25", "18:30"];
@@ -16,20 +15,20 @@ export const HeatPage = () => {
   const [generated, setGenerated] = useState(false);
   const [refresh, setRefresh] = useState(0);
 
-  const backupCourses = useMemo(() => {
-    const selected = getBackupCourses();
-    return selected.length > 0 ? selected : MOCK_COURSES.slice(0, 6);
+  const selectedCourses = useMemo(() => {
+    const selected = getSelectedCourses();
+    return selected;
   }, [refresh]);
   const stats = getCourseStats();
 
   const schedule = useMemo(
-    () => backupCourses.map((course, index) => ({
+    () => selectedCourses.map((course, index) => ({
       course,
       day: DAYS[index % DAYS.length],
       time: TIMES[Math.floor(index / DAYS.length) % TIMES.length],
       room: ROOMS[index % ROOMS.length],
     })),
-    [backupCourses]
+    [selectedCourses]
   );
 
   const generateSchedule = () => {
@@ -43,17 +42,16 @@ export const HeatPage = () => {
 
   return (
     <PageWrapper>
-      <header className="px-6 pt-10 pb-6 bg-gray-50">
+      <header className="px-5 pt-5 pb-4 bg-gray-50">
         <SchoolMark compact />
-        <p className="text-[10px] font-black uppercase tracking-widest text-blue-700 mt-7">Course Plan</p>
-        <h1 className="text-3xl font-black text-gray-900 mt-1">备选与课表</h1>
-        <p className="text-sm text-gray-400 font-medium mt-2">备选课程和模拟课表改为纵向展示，方便手机端一次看清。</p>
+        <p className="text-[10px] font-black uppercase tracking-widest text-blue-700 mt-4">Course Plan</p>
+        <h1 className="text-2xl font-black text-gray-900 mt-1">已选课程与课表</h1>
       </header>
 
-      <section className="px-6">
-        <div className="rounded-[30px] bg-[#173b83] text-white p-6 shadow-xl shadow-blue-900/15">
+      <section className="px-5">
+        <div className="rounded-[24px] bg-[#173b83] text-white p-5 shadow-xl shadow-blue-900/15">
           <div className="grid grid-cols-3 gap-3 text-center">
-            <div><p className="text-2xl font-black">{stats.backupCount}</p><p className="text-[10px] text-white/55 font-black">备选课程</p></div>
+            <div><p className="text-2xl font-black">{stats.selectedCount}</p><p className="text-[10px] text-white/55 font-black">已选课程</p></div>
             <div><p className="text-2xl font-black">{stats.selectedCredits}</p><p className="text-[10px] text-white/55 font-black">已选学分</p></div>
             <div><p className="text-2xl font-black">{stats.remainingCredits}</p><p className="text-[10px] text-white/55 font-black">剩余学分</p></div>
           </div>
@@ -64,11 +62,17 @@ export const HeatPage = () => {
         </div>
       </section>
 
-      <section className="px-6 mt-8">
-        <h2 className="font-black text-gray-900 text-lg mb-4">备选课程</h2>
+      <section className="px-5 mt-6">
+        <h2 className="font-black text-gray-900 text-lg mb-3">已选课程</h2>
         <div className="space-y-3">
-          {backupCourses.map((course) => (
-            <div key={course.id} className="rounded-[24px] bg-white border border-gray-100 p-4 shadow-sm">
+          {selectedCourses.length === 0 ? (
+            <div className="rounded-[20px] bg-white border border-gray-100 p-6 text-center shadow-sm">
+              <CalendarDays className="mx-auto text-gray-200" size={34} />
+              <p className="mt-3 text-sm font-black text-gray-900">还没有已选课程</p>
+              <button onClick={() => navigate("/courses")} className="mt-4 h-10 px-5 rounded-xl bg-blue-800 text-xs font-black text-white">去选择课程</button>
+            </div>
+          ) : selectedCourses.map((course) => (
+            <div key={course.id} className="rounded-[20px] bg-white border border-gray-100 p-4 shadow-sm">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-[10px] font-black text-blue-700">{course.category}</p>
@@ -78,7 +82,7 @@ export const HeatPage = () => {
                 </div>
                 <button
                   onClick={() => {
-                    toggleBackupCourse(course);
+                    toggleSelectedCourse(course);
                     setRefresh((value) => value + 1);
                   }}
                   className="p-2 rounded-full bg-red-50 text-red-500 flex-shrink-0"
@@ -97,7 +101,7 @@ export const HeatPage = () => {
         </div>
       </section>
 
-      <section className="px-6 mt-8 pb-36">
+      <section className="px-5 mt-6 pb-28">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-black text-gray-900 text-lg">模拟课表</h2>
           {generated && <span className="text-[10px] font-black text-emerald-600 flex items-center gap-1"><CheckCircle2 size={13} />已生成</span>}

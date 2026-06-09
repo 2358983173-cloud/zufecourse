@@ -26,7 +26,6 @@ export interface Course {
   rank?: string;
   difficulty: "轻松" | "中等" | "挑战";
   reviews: Review[];
-  isAlternate?: boolean;
 }
 export const CATEGORIES = ["全部", "通识教育必修课", "学科基础必修课", "专业核心必修课", "银行管理方向"];
 const DEFAULT_REVIEWS: Review[] = [
@@ -1412,7 +1411,6 @@ export const SIMULATED_SCHEDULE = [
 ];
 export const TAG_POOL = ["编程基础", "线代基础", "会计基础", "金工基础", "英语基础", "高数基础", "计量基础", "统计基础", "论文", "闭卷", "开卷", "小组报告", "随堂互动", "实操", "理论", "难", "热", "满", "高绩点", "主修", "跨学科融合"];
 export const state = {
-  alternateCourseIds: new Set<string>(),
   completedCourseIds: new Set<string>(),
   recommendationProfile: null as any,
   isLoggedIn: false,

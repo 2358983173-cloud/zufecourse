@@ -1,7 +1,7 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { ArrowRight, BookOpen, CheckCircle2, RotateCcw } from "lucide-react";
 import { motion } from "motion/react";
-import { CareerProfile, careerProfiles, selfExploreProfile } from "../career-profiles";
+import { CareerProfile, selfExploreProfile } from "../career-profiles";
 import { CareerResult, getCareerReport } from "../career-storage";
 
 interface CareerReportProps {
@@ -29,32 +29,8 @@ const PillList = ({ items, tone = "blue" }: { items: string[]; tone?: "blue" | "
 };
 
 export const CareerCharacter = ({ profile }: { profile: CareerProfile }) => {
-  const Accessory = () => {
-    if (profile.characterVisual === "shield") {
-      return <path d="M42 40 L64 31 L86 40 C84 66 74 82 64 88 C54 82 44 66 42 40Z" fill="#dbeafe" stroke="#1d4ed8" strokeWidth="4" />;
-    }
-    if (profile.characterVisual === "calculator") {
-      return <rect x="42" y="36" width="44" height="54" rx="8" fill="#eff6ff" stroke="#1d4ed8" strokeWidth="4" />;
-    }
-    if (profile.characterVisual === "laptop") {
-      return <path d="M36 56 H92 V86 H30 L36 56Z" fill="#e0f2fe" stroke="#1d4ed8" strokeWidth="4" />;
-    }
-    if (profile.characterVisual === "book") {
-      return <path d="M35 42 C48 35 58 39 64 46 C70 39 80 35 93 42 V86 C80 80 70 80 64 88 C58 80 48 80 35 86Z" fill="#eef2ff" stroke="#1d4ed8" strokeWidth="4" />;
-    }
-    if (profile.characterVisual === "client") {
-      return <rect x="36" y="42" width="56" height="38" rx="10" fill="#ecfdf5" stroke="#047857" strokeWidth="4" />;
-    }
-    return (
-      <>
-        <rect x="36" y="40" width="56" height="42" rx="10" fill="#eff6ff" stroke="#1d4ed8" strokeWidth="4" />
-        <path d="M48 70 L58 60 L68 65 L80 51" fill="none" stroke="#0891b2" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-      </>
-    );
-  };
-
   return (
-    <div className="rounded-[30px] bg-white border border-gray-100 p-5 shadow-sm overflow-hidden">
+    <div className="rounded-[24px] bg-white border border-gray-100 p-4 shadow-sm overflow-hidden">
       <div className="flex items-center justify-between mb-4">
         <div>
           <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Character</p>
@@ -62,17 +38,9 @@ export const CareerCharacter = ({ profile }: { profile: CareerProfile }) => {
         </div>
         <profile.icon size={24} className="text-blue-700" />
       </div>
-      <div className="grid grid-cols-[130px_1fr] gap-4 items-center">
-        <div className="relative h-44 rounded-[28px] bg-gradient-to-b from-blue-50 to-slate-50 flex items-center justify-center">
-          <svg viewBox="0 0 128 150" className="w-32 h-40" role="img" aria-label={profile.title}>
-            <circle cx="64" cy="25" r="17" fill="#dbeafe" stroke="#1e3a8a" strokeWidth="4" />
-            <path d="M44 54 C50 42 78 42 84 54 V112 C74 121 54 121 44 112Z" fill="#1e3a8a" />
-            <path d="M48 63 H80" stroke="#93c5fd" strokeWidth="5" strokeLinecap="round" />
-            <path d="M44 69 C29 76 28 95 38 104" fill="none" stroke="#1e3a8a" strokeWidth="8" strokeLinecap="round" />
-            <path d="M84 69 C99 76 100 95 90 104" fill="none" stroke="#1e3a8a" strokeWidth="8" strokeLinecap="round" />
-            <Accessory />
-            <path d="M54 119 V140 M74 119 V140" stroke="#1e3a8a" strokeWidth="8" strokeLinecap="round" />
-          </svg>
+      <div className="grid grid-cols-[132px_1fr] gap-3 items-center">
+        <div className="relative h-40 rounded-[22px] bg-blue-50 overflow-hidden">
+          <img src={profile.image} alt={profile.title} className="w-full h-full object-contain object-center" />
         </div>
         <div className="space-y-2">
           {profile.accentSkills.map((skill, index) => (
@@ -86,50 +54,33 @@ export const CareerCharacter = ({ profile }: { profile: CareerProfile }) => {
   );
 };
 
-export const CareerTree = ({
-  selectedId,
-  onSelect,
-}: {
-  selectedId: string;
-  onSelect: (profile: CareerProfile) => void;
-}) => (
-  <div className="rounded-[30px] bg-white border border-gray-100 p-5 shadow-sm">
+export const CareerTree = ({ profile }: { profile: CareerProfile }) => (
+  <div className="rounded-[24px] bg-white border border-gray-100 p-4 shadow-sm">
     <h3 className="text-lg font-black text-gray-900 mb-4">金融职业成长树</h3>
     <div className="relative">
-      <div className="absolute left-1/2 top-3 bottom-3 w-px -translate-x-1/2 bg-blue-100" />
-      {["金融基础能力", "经济学与公司金融", "统计计量与数据理解", "职业方向分流"].map((node) => (
-        <div key={node} className="relative z-10 mx-auto mb-3 w-[72%] rounded-2xl bg-slate-900 px-4 py-3 text-center text-xs font-black text-white shadow-sm">
-          {node}
+      <div className="absolute left-4 top-4 bottom-4 w-px bg-blue-200" />
+      {[
+        "金融基础能力",
+        "经济学与公司金融",
+        "统计计量与数据理解",
+        `${profile.title}方向能力`,
+        profile.careers.slice(0, 3).join(" / "),
+      ].map((node, index) => (
+        <div key={node} className="relative z-10 mb-3 flex items-center gap-3 last:mb-0">
+          <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-black ${
+            index >= 3 ? "bg-blue-700 text-white" : "bg-blue-50 text-blue-700 border border-blue-100"
+          }`}>{index + 1}</div>
+          <div className={`flex-1 rounded-2xl px-4 py-3 text-xs font-black ${
+            index >= 3 ? "bg-blue-50 text-blue-900" : "bg-gray-50 text-gray-700"
+          }`}>{node}</div>
         </div>
       ))}
-      <div className="relative z-10 grid grid-cols-2 gap-3 pt-3">
-        {careerProfiles.map((profile) => {
-          const active = profile.id === selectedId;
-          return (
-            <button
-              key={profile.id}
-              onClick={() => onSelect(profile)}
-              className={`min-h-20 rounded-[22px] border p-3 text-left transition-all ${
-                active
-                  ? "border-blue-500 bg-blue-50 shadow-md shadow-blue-100"
-                  : "border-gray-100 bg-gray-50"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <profile.icon size={17} className={active ? "text-blue-700" : "text-gray-400"} />
-                <span className={`text-sm font-black ${active ? "text-blue-900" : "text-gray-700"}`}>{profile.shortTitle}</span>
-              </div>
-              <p className="mt-2 text-[10px] font-bold leading-relaxed text-gray-400">{profile.title}</p>
-            </button>
-          );
-        })}
-      </div>
     </div>
   </div>
 );
 
 export const CareerDetailCard = ({ profile }: { profile: CareerProfile }) => (
-  <div className="rounded-[30px] bg-white border border-gray-100 p-5 shadow-sm">
+  <div className="rounded-[24px] bg-white border border-gray-100 p-4 shadow-sm">
     <h3 className="text-lg font-black text-gray-900">{profile.title}</h3>
     <p className="mt-3 text-xs font-medium leading-relaxed text-gray-500">{profile.description}</p>
 
@@ -154,7 +105,7 @@ export const CareerDetailCard = ({ profile }: { profile: CareerProfile }) => (
 );
 
 export const CareerPathTimeline = ({ profile }: { profile: CareerProfile }) => (
-  <div className="rounded-[30px] bg-white border border-gray-100 p-5 shadow-sm">
+  <div className="rounded-[24px] bg-white border border-gray-100 p-4 shadow-sm">
     <h3 className="text-lg font-black text-gray-900 mb-5">课程成长路径</h3>
     <div className="space-y-3">
       {profile.coursePath.map((item, index) => (
@@ -177,12 +128,6 @@ export const CareerPathTimeline = ({ profile }: { profile: CareerProfile }) => (
 export const CareerReport = ({ result, compact = false, onRetake }: CareerReportProps) => {
   const report = useMemo(() => getCareerReport(result), [result]);
   const defaultProfile = report.primary || selfExploreProfile;
-  const [selectedProfile, setSelectedProfile] = useState<CareerProfile>(defaultProfile);
-
-  React.useEffect(() => {
-    setSelectedProfile(defaultProfile);
-  }, [defaultProfile]);
-
   if (compact) {
     return (
       <div className="space-y-5">
@@ -211,8 +156,8 @@ export const CareerReport = ({ result, compact = false, onRetake }: CareerReport
           </div>
         </div>
         <CareerCharacter profile={defaultProfile} />
-        <CareerTree selectedId={selectedProfile.id} onSelect={setSelectedProfile} />
-        <CareerPathTimeline profile={selectedProfile} />
+        <CareerTree profile={defaultProfile} />
+        <CareerPathTimeline profile={defaultProfile} />
       </div>
     );
   }
@@ -222,21 +167,21 @@ export const CareerReport = ({ result, compact = false, onRetake }: CareerReport
       <motion.section
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`rounded-[36px] bg-gradient-to-br ${defaultProfile.color} p-6 text-white shadow-xl shadow-blue-900/15`}
+        className={`rounded-[28px] bg-gradient-to-br ${defaultProfile.color} p-5 text-white shadow-xl shadow-blue-900/15`}
       >
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-[10px] font-black uppercase tracking-widest text-white/55">浙江财经大学</p>
             <p className="mt-1 text-xs font-black text-blue-100">金融学专业选课助手</p>
-            <h1 className="mt-6 text-3xl font-black leading-tight">金融职业方向报告</h1>
+            <h1 className="mt-4 text-2xl font-black leading-tight">金融职业方向报告</h1>
             <p className="mt-3 text-xl font-black">{report.title}</p>
           </div>
           <div className="rounded-2xl bg-white/12 p-3">
             <defaultProfile.icon size={30} />
           </div>
         </div>
-        <p className="mt-5 text-sm font-medium leading-relaxed text-white/72">{report.summary}</p>
-        <div className="mt-6 space-y-3">
+        <p className="mt-4 text-xs font-medium leading-relaxed text-white/72">{report.summary}</p>
+        <div className="mt-4 space-y-2">
           {report.ranked.slice(0, 3).map(({ profile, percent }) => (
             <div key={profile.id}>
               <div className="mb-1 flex justify-between text-[11px] font-black text-white/75">
@@ -251,22 +196,22 @@ export const CareerReport = ({ result, compact = false, onRetake }: CareerReport
         </div>
       </motion.section>
 
-      <CareerCharacter profile={selectedProfile} />
+      <CareerCharacter profile={defaultProfile} />
 
-      <section className="rounded-[30px] bg-white border border-gray-100 p-5 shadow-sm">
+      <section className="rounded-[24px] bg-white border border-gray-100 p-4 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-lg font-black text-gray-900">推荐职业方向</h3>
           <span className="text-[10px] font-black text-blue-700">优先 3 项</span>
         </div>
-        <PillList items={selectedProfile.careers.slice(0, 3)} />
+        <PillList items={defaultProfile.careers.slice(0, 3)} />
       </section>
 
-      <CareerTree selectedId={selectedProfile.id} onSelect={setSelectedProfile} />
-      <CareerDetailCard profile={selectedProfile} />
-      <CareerPathTimeline profile={selectedProfile} />
+      <CareerTree profile={defaultProfile} />
+      <CareerDetailCard profile={defaultProfile} />
+      <CareerPathTimeline profile={defaultProfile} />
 
       {report.matchedCourses.length > 0 && (
-        <section className="rounded-[30px] bg-white border border-gray-100 p-5 shadow-sm">
+        <section className="rounded-[24px] bg-white border border-gray-100 p-4 shadow-sm">
           <h3 className="text-lg font-black text-gray-900 mb-4">课程库匹配课程</h3>
           <div className="space-y-3">
             {report.matchedCourses.slice(0, 5).map((course) => (
@@ -284,11 +229,11 @@ export const CareerReport = ({ result, compact = false, onRetake }: CareerReport
         </section>
       )}
 
-      <section className="rounded-[30px] bg-white border border-gray-100 p-5 shadow-sm">
+      <section className="rounded-[24px] bg-white border border-gray-100 p-4 shadow-sm">
         <h3 className="text-lg font-black text-gray-900 mb-3">推荐行动建议</h3>
         <div className="flex gap-3 rounded-2xl bg-blue-50 p-4 text-sm font-bold leading-relaxed text-blue-900">
           <CheckCircle2 size={18} className="mt-0.5 flex-shrink-0" />
-          {selectedProfile.action}
+          {defaultProfile.action}
         </div>
       </section>
 

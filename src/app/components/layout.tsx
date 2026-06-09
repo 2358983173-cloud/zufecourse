@@ -31,7 +31,7 @@ export const BottomNav = () => {
   const navItems = [
     { icon: Home, label: "首页", path: "/home" },
     { icon: BookOpen, label: "课程", path: "/courses" },
-    { icon: CalendarDays, label: "备选", path: "/heat" },
+    { icon: CalendarDays, label: "课表", path: "/heat" },
     { icon: User, label: "我的", path: "/profile" },
   ];
 
@@ -97,7 +97,7 @@ export const FloatingCreditBar = () => {
             <div><p className={`text-lg font-black ${statusColor}`}>{stats.exceededCredits || stats.remainingCredits}</p><p className="text-[10px] font-bold text-gray-400">{stats.exceededCredits ? "超出" : "剩余"}</p></div>
           </div>
           <div className="mt-4 grid grid-cols-2 gap-2">
-            <button onClick={() => navigate("/heat")} className="h-10 rounded-2xl bg-blue-50 text-xs font-black text-blue-700">查看备选</button>
+            <button onClick={() => navigate("/heat")} className="h-10 rounded-2xl bg-blue-50 text-xs font-black text-blue-700">查看课表</button>
             <button onClick={() => navigate("/courses")} className="h-10 rounded-2xl bg-gray-900 text-xs font-black text-white">去调整</button>
           </div>
         </motion.div>
@@ -119,17 +119,17 @@ export const FloatingCreditBar = () => {
   );
 };
 
-export const PageWrapper = ({ children }: { children: React.ReactNode }) => {
+export const PageWrapper = ({ children, showCreditPlan = false }: { children: React.ReactNode; showCreditPlan?: boolean }) => {
   return (
     <motion.div
       initial={{ opacity: 0, x: 12 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -12 }}
       transition={{ duration: 0.25 }}
-      className="pb-24 min-h-screen bg-gray-50"
+      className="pb-24 min-h-screen bg-gray-50 overflow-x-hidden"
     >
       {children}
-      <FloatingCreditBar />
+      {showCreditPlan && <FloatingCreditBar />}
     </motion.div>
   );
 };

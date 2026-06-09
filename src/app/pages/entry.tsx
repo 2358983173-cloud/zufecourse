@@ -52,7 +52,7 @@ export const EntryPage = () => {
           <div className="text-center">
             <h3 className="font-bold text-lg text-white">智能推荐选课</h3>
             <p className="text-xs text-white/80 mt-1 px-4 leading-relaxed">
-              完成 7 个问题，系统根据你的兴趣、目标和偏好推荐课程
+              完成 6 个简单问题，整理你的职业方向和推荐课程
             </p>
           </div>
         </motion.button>

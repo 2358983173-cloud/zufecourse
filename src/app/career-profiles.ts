@@ -31,7 +31,15 @@ export interface CareerProfile {
   color: string;
   icon: typeof LineChart;
   accentSkills: string[];
+  image: string;
 }
+
+import investmentImage from "../assets/career-investment.png";
+import riskImage from "../assets/career-risk.png";
+import auditImage from "../assets/career-audit.png";
+import fintechImage from "../assets/career-fintech.png";
+import wealthImage from "../assets/career-wealth.png";
+import postgraduateImage from "../assets/career-postgraduate.png";
 
 export const careerProfiles: CareerProfile[] = [
   {
@@ -49,6 +57,7 @@ export const careerProfiles: CareerProfile[] = [
     color: "from-blue-900 to-cyan-700",
     icon: LineChart,
     accentSkills: ["分析力", "数字敏感度", "表达能力", "市场判断"],
+    image: investmentImage,
   },
   {
     id: "bank_risk",
@@ -65,6 +74,7 @@ export const careerProfiles: CareerProfile[] = [
     color: "from-slate-900 to-blue-700",
     icon: ShieldCheck,
     accentSkills: ["风险意识", "分析力", "规则理解", "材料判断"],
+    image: riskImage,
   },
   {
     id: "finance_audit",
@@ -81,6 +91,7 @@ export const careerProfiles: CareerProfile[] = [
     color: "from-indigo-900 to-sky-700",
     icon: Calculator,
     accentSkills: ["数字敏感度", "细节能力", "财务分析", "规则意识"],
+    image: auditImage,
   },
   {
     id: "fintech",
@@ -97,6 +108,7 @@ export const careerProfiles: CareerProfile[] = [
     color: "from-blue-950 to-teal-700",
     icon: BarChart3,
     accentSkills: ["数据能力", "工具能力", "模型意识", "业务理解"],
+    image: fintechImage,
   },
   {
     id: "wealth_management",
@@ -113,6 +125,7 @@ export const careerProfiles: CareerProfile[] = [
     color: "from-sky-900 to-emerald-700",
     icon: Users,
     accentSkills: ["沟通力", "方案能力", "产品理解", "客户意识"],
+    image: wealthImage,
   },
   {
     id: "postgraduate",
@@ -129,6 +142,7 @@ export const careerProfiles: CareerProfile[] = [
     color: "from-slate-900 to-indigo-700",
     icon: BookOpen,
     accentSkills: ["理论能力", "自律能力", "数学基础", "研究意识"],
+    image: postgraduateImage,
   },
 ];
 
@@ -137,15 +151,16 @@ export const selfExploreProfile: CareerProfile = {
   title: "自主探索型",
   shortTitle: "探索",
   description: "你可以先浏览课程，也可以完成职业方向测评，生成更准确的课程路径。",
-  careers: ["先浏览课程", "加入备选", "完成测评"],
+  careers: ["先浏览课程", "加入已选", "完成测评"],
   courses: ["金融学基础", "公司金融", "统计学"],
   skills: ["自主筛选", "课程比较", "方向探索"],
-  coursePath: ["浏览课程库", "加入备选课程", "生成模拟课表", "完成职业方向测评"],
-  action: "建议先完成职业方向测评，再结合备选课程和学分目标调整选课组合。",
+  coursePath: ["浏览课程库", "加入已选课程", "生成模拟课表", "完成职业方向测评"],
+  action: "建议先完成职业方向测评，再结合已选课程和学分目标调整选课组合。",
   characterVisual: "client",
   color: "from-slate-900 to-blue-700",
   icon: BriefcaseBusiness,
   accentSkills: ["自主规划", "课程比较", "目标确认", "逐步调整"],
+  image: investmentImage,
 };
 
 export const getCareerProfile = (id?: CareerProfileId | string | null) =>
