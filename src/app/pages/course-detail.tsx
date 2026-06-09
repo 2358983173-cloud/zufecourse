@@ -48,6 +48,11 @@ const TEACHER_NOTES: Record<string, string> = {
 };
 
 const tagStyle = (tag: string) => {
+  if (tag === "通识选修") return "bg-cyan-100 text-cyan-700 border-cyan-200";
+  if (tag === "人文素养") return "bg-rose-100 text-rose-700 border-rose-200";
+  if (tag === "科学精神") return "bg-indigo-100 text-indigo-700 border-indigo-200";
+  if (tag === "社会认知") return "bg-teal-100 text-teal-700 border-teal-200";
+  if (tag === "管理智慧") return "bg-orange-100 text-orange-700 border-orange-200";
   if (tag.includes("热") || tag.includes("满")) return "bg-red-100 text-red-700 border-red-200";
   if (tag.includes("实操") || tag.includes("编程")) return "bg-blue-100 text-blue-700 border-blue-200";
   if (tag.includes("闭卷") || tag.includes("难")) return "bg-amber-100 text-amber-700 border-amber-200";
