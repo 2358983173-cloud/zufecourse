@@ -12,20 +12,16 @@ import {
   Globe,
   Briefcase,
   BookOpen,
-  Scale,
-  Database
 } from "lucide-react";
 import { motion } from "motion/react";
 
 const CATEGORY_ICONS: Record<string, any> = {
-  "金融投资": PieChart,
-  "财务会计": Target,
-  "数据分析": Database,
-  "法律税务": Scale,
-  "经济理论": Globe,
-  "管理实践": Briefcase,
-  "编程技术": Cpu,
-  "通识拓展": BookOpen,
+  "通识分层必修": BookOpen,
+  "学科必修": Globe,
+  "专业必修": Target,
+  "专业选修": PieChart,
+  "个性化选修": Cpu,
+  "通识": Briefcase,
   "全部": Flame
 };
 

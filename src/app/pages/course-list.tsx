@@ -23,7 +23,10 @@ export const CourseList = () => {
         ? "rating"
         : "default";
   const [sortMode, setSortMode] = useState<SortMode>(initialSort);
-  const [selectedCategory, setSelectedCategory] = useState("全部");
+  const initialCategory = searchParams.get("category");
+  const [selectedCategory, setSelectedCategory] = useState(
+    initialCategory && CATEGORIES.includes(initialCategory) ? initialCategory : "全部"
+  );
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") ?? "");
   const [refresh, setRefresh] = useState(0);
   const [viewMode, setViewMode] = useState<ViewMode>("all");

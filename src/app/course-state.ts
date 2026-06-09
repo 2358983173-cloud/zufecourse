@@ -3,6 +3,8 @@ import { Course, MOCK_COURSES, state } from "./data";
 export const CREDIT_TARGET = 22;
 export const COURSE_STATE_EVENT = "course-state-change";
 const keys = { selected: "selectedCourses", favorite: "favoriteCourses", target: "creditTarget" };
+const COURSE_CATALOG_VERSION = "2026-06-zufe-course-catalog-v2";
+const VERSION_KEY = "courseCatalogVersion";
 const storage = () => typeof window !== "undefined" ? window.localStorage : null;
 const read = (key: string) => {
   try { return new Set<string>(JSON.parse(storage()?.getItem(key) || "[]").map(String)); }
@@ -12,6 +14,11 @@ const write = (key: string, ids: Set<string>) => storage()?.setItem(key, JSON.st
 const emit = () => window.dispatchEvent(new Event(COURSE_STATE_EVENT));
 
 export const initializeCourseState = () => {
+  if (storage()?.getItem(VERSION_KEY) !== COURSE_CATALOG_VERSION) {
+    storage()?.removeItem(keys.selected);
+    storage()?.removeItem(keys.favorite);
+    storage()?.setItem(VERSION_KEY, COURSE_CATALOG_VERSION);
+  }
   state.completedCourseIds = read(keys.selected);
 };
 export const getFavoriteCourseIds = () => read(keys.favorite);
