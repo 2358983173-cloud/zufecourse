@@ -6,16 +6,23 @@ import { CourseComment, deleteComment, getAuthUser, getComments, postComment, re
 export const CommentSection = ({ courseId }: { courseId: string }) => {
   const navigate = useNavigate();
   const user = getAuthUser();
-  const [comments, setComments] = useState<CourseComment[]>([]);
+  const cacheKey = `courseComments:${courseId}`;
+  const readCache = () => {
+    try { return JSON.parse(localStorage.getItem(cacheKey) || "[]") as CourseComment[]; }
+    catch { return []; }
+  };
+  const [comments, setComments] = useState<CourseComment[]>(readCache);
   const [content, setContent] = useState("");
   const [replyTo, setReplyTo] = useState<CourseComment | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(comments.length === 0);
   const [error, setError] = useState("");
 
-  const load = async () => {
+  const load = async (fresh = false) => {
     try {
-      setLoading(true);
-      setComments((await getComments(courseId)).comments);
+      if (comments.length === 0) setLoading(true);
+      const latest = (await getComments(courseId, fresh)).comments;
+      setComments(latest);
+      localStorage.setItem(cacheKey, JSON.stringify(latest));
       setError("");
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "评论加载失败");
@@ -34,9 +41,25 @@ export const CommentSection = ({ courseId }: { courseId: string }) => {
       await postComment(courseId, content, replyTo?.id);
       setContent("");
       setReplyTo(null);
-      await load();
+      await load(true);
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "评论发布失败");
+    }
+  };
+
+  const canDelete = (comment: CourseComment) => user?.role === "admin" || user?.id === comment.userId;
+  const toggleLike = async (comment: CourseComment) => {
+    if (!user) return navigate("/login");
+    const previous = comments;
+    setComments((items) => items.map((item) => item.id === comment.id ? {
+      ...item,
+      liked: !item.liked,
+      likes: Math.max(0, item.likes + (item.liked ? -1 : 1)),
+    } : item));
+    try { await toggleCommentLike(comment.id); }
+    catch (requestError) {
+      setComments(previous);
+      setError(requestError instanceof Error ? requestError.message : "点赞失败");
     }
   };
 
@@ -51,10 +74,10 @@ export const CommentSection = ({ courseId }: { courseId: string }) => {
           </div>
           <p className="mt-2 text-xs font-medium leading-relaxed text-gray-600">{comment.content}</p>
           <div className="mt-3 flex gap-4">
-            <button onClick={async () => { if (!user) return navigate("/login"); await toggleCommentLike(comment.id); await load(); }} className={`flex items-center gap-1 text-[10px] font-black ${comment.liked ? "text-blue-700" : "text-gray-400"}`}><ThumbsUp size={13} />{comment.likes}</button>
+            <button onClick={() => toggleLike(comment)} className={`flex items-center gap-1 text-[10px] font-black ${comment.liked ? "text-blue-700" : "text-gray-400"}`}><ThumbsUp size={13} />{comment.likes}</button>
             {!reply && <button onClick={() => user ? setReplyTo(comment) : navigate("/login")} className="flex items-center gap-1 text-[10px] font-black text-gray-400"><MessageCircle size={13} />回复</button>}
             <button onClick={async () => { if (!user) return navigate("/login"); await reportComment(comment.id); }} className="flex items-center gap-1 text-[10px] font-black text-gray-400"><Flag size={13} />举报</button>
-            {comment.canDelete && <button onClick={async () => { await deleteComment(comment.id); await load(); }} className="flex items-center gap-1 text-[10px] font-black text-red-400"><Trash2 size={13} />删除</button>}
+            {canDelete(comment) && <button onClick={async () => { await deleteComment(comment.id); await load(true); }} className="flex items-center gap-1 text-[10px] font-black text-red-400"><Trash2 size={13} />删除</button>}
           </div>
         </div>
       </div>

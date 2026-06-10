@@ -40,7 +40,7 @@ export const CareerCharacter = ({ profile }: { profile: CareerProfile }) => {
       </div>
       <div className="grid grid-cols-[132px_1fr] gap-3 items-center">
         <div className="relative h-40 rounded-[22px] bg-blue-50 overflow-hidden">
-          <img src={profile.image} alt={profile.title} className="w-full h-full object-contain object-center" />
+          <img loading="lazy" decoding="async" src={profile.image} alt={profile.title} className="w-full h-full object-contain object-center" />
         </div>
         <div className="space-y-2">
           {profile.accentSkills.map((skill, index) => (

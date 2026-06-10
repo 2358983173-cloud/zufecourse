@@ -34,12 +34,12 @@ export interface CareerProfile {
   image: string;
 }
 
-import investmentImage from "../assets/career-investment.png";
-import riskImage from "../assets/career-risk.png";
-import auditImage from "../assets/career-audit.png";
-import fintechImage from "../assets/career-fintech.png";
-import wealthImage from "../assets/career-wealth.png";
-import postgraduateImage from "../assets/career-postgraduate.png";
+import investmentImage from "../assets/career-investment.webp";
+import riskImage from "../assets/career-risk.webp";
+import auditImage from "../assets/career-audit.webp";
+import fintechImage from "../assets/career-fintech.webp";
+import wealthImage from "../assets/career-wealth.webp";
+import postgraduateImage from "../assets/career-postgraduate.webp";
 
 export const careerProfiles: CareerProfile[] = [
   {

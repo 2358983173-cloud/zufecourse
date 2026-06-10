@@ -19,8 +19,8 @@ export interface CourseComment {
   nickname: string;
   role: string;
   likes: number;
-  liked: boolean;
-  canDelete: boolean;
+  liked?: boolean;
+  canDelete?: boolean;
 }
 
 export const getAuthUser = (): AuthUser | null => {
@@ -33,13 +33,14 @@ export const clearAuth = () => {
   localStorage.removeItem(USER_KEY);
 };
 
-const request = async <T>(path: string, options: RequestInit = {}): Promise<T> => {
+const request = async <T>(path: string, options: RequestInit = {}, authenticated = true): Promise<T> => {
   const token = localStorage.getItem(TOKEN_KEY);
+  const hasBody = options.body !== undefined;
   const response = await fetch(`${API_BASE}${path}`, {
     ...options,
     headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(hasBody ? { "Content-Type": "application/json" } : {}),
+      ...(authenticated && token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
   });
@@ -70,8 +71,12 @@ export const register = async (studentId: string, nickname: string, password: st
     body: JSON.stringify({ studentId, nickname, password }),
   }));
 
-export const getComments = (courseId: string) =>
-  request<{ comments: CourseComment[] }>(`/courses/${encodeURIComponent(courseId)}/comments`);
+export const getComments = (courseId: string, fresh = false) =>
+  request<{ comments: CourseComment[] }>(
+    `/courses/${encodeURIComponent(courseId)}/comments${fresh ? `?refresh=${Date.now()}` : ""}`,
+    { cache: fresh ? "no-store" : "default" },
+    false
+  );
 
 export const postComment = (courseId: string, content: string, parentId?: number) =>
   request<{ id: number }>(`/courses/${encodeURIComponent(courseId)}/comments`, {
