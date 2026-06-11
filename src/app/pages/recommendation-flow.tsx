@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowLeft, BrainCircuit, ChevronRight, Compass, Sparkles } from "lucide-react";
 import { careerQuizQuestions } from "../career-quiz-questions";
@@ -9,19 +9,25 @@ import { replaceCareerRecommendedCourses } from "../course-state";
 
 export const RecommendationFlow = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const existingResult = useRef(loadCareerResult());
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisStage, setAnalysisStage] = useState(0);
-  const previousRecommendedCourses = useRef(getCareerReport(loadCareerResult()).matchedCourses);
+  const previousRecommendedCourses = useRef(getCareerReport(existingResult.current).matchedCourses);
   const currentQuestion = careerQuizQuestions[currentStep];
   const progress = ((currentStep + 1) / careerQuizQuestions.length) * 100;
   const answeredCount = Object.keys(answers).length;
 
   useEffect(() => {
+    if (existingResult.current && searchParams.get("retake") !== "1") {
+      navigate("/recommendation-result", { replace: true });
+      return;
+    }
     replaceCareerRecommendedCourses([], previousRecommendedCourses.current);
     clearCareerResult();
-  }, []);
+  }, [navigate, searchParams]);
 
   const nextStep = () => {
     if (currentStep < careerQuizQuestions.length - 1) {

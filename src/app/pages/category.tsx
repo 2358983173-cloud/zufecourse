@@ -1,5 +1,6 @@
 import React from "react";
 import { PageWrapper } from "../components/layout";
+import { loadCareerResult } from "../career-storage";
 import { CATEGORIES } from "../data";
 import { Link } from "react-router";
 import { 
@@ -26,6 +27,7 @@ const CATEGORY_ICONS: Record<string, any> = {
 };
 
 export const CategoryPage = () => {
+  const hasCareerResult = Boolean(loadCareerResult());
   return (
     <PageWrapper>
       <header className="px-5 pt-5 pb-4 bg-white sticky top-0 z-20 border-b border-gray-50/50">
@@ -68,13 +70,13 @@ export const CategoryPage = () => {
             <div className="absolute top-[-20%] right-[-10%] w-40 h-40 bg-white/10 rounded-full blur-2xl" />
             <h2 className="text-xl font-black mb-2 leading-tight">不知道选什么？</h2>
             <p className="text-xs text-blue-100/80 mb-6 leading-relaxed">
-               完成职业方向测评，快速整理适合你的课程路径。
+               {hasCareerResult ? "查看当前职业方向和推荐课程路径。" : "完成职业方向测评，快速整理适合你的课程路径。"}
             </p>
             <Link 
-              to="/recommendation"
+              to={hasCareerResult ? "/recommendation-result" : "/recommendation"}
               className="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-2xl text-xs font-black shadow-lg"
             >
-               立即开始 <ChevronRight size={14} />
+               {hasCareerResult ? "查看职业报告" : "立即开始"} <ChevronRight size={14} />
             </Link>
          </div>
       </section>

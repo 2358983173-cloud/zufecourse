@@ -126,7 +126,7 @@ export const Home = () => {
               {[
                 [BookOpen, "全部课程", "/courses"],
                 [CalendarDays, "模拟课表", "/heat"],
-                [ClipboardList, "重新测评", "/recommendation"],
+                ...(careerResult ? [] : [[ClipboardList, "方向测评", "/recommendation"]]),
                 [GraduationCap, "职业报告", "/recommendation-result"],
               ].map(([Icon, label, path]) => {
                 const ActionIcon = Icon as typeof BookOpen;
@@ -175,14 +175,14 @@ export const Home = () => {
 
       <section className="px-5 mt-3 grid grid-cols-2 gap-3 lg:hidden">
         <button
-          onClick={() => navigate("/recommendation")}
+          onClick={() => navigate(careerResult ? "/recommendation-result" : "/recommendation")}
           className="min-h-24 rounded-[20px] bg-white border border-gray-100 p-4 text-left shadow-sm"
         >
           <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
             <ClipboardList size={19} />
           </div>
-          <h2 className="font-black text-gray-900 mt-3">方向问卷</h2>
-          <p className="text-[11px] text-gray-400 font-bold mt-1">重新梳理选课偏好</p>
+          <h2 className="font-black text-gray-900 mt-3">{careerResult ? "职业报告" : "方向问卷"}</h2>
+          <p className="text-[11px] text-gray-400 font-bold mt-1">{careerResult ? "查看方向与课程建议" : "梳理选课偏好"}</p>
         </button>
         <button
           onClick={() => navigate("/heat")}

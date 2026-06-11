@@ -4,6 +4,7 @@ import { BarChart3, BookOpen, CalendarDays, ChevronUp, ClipboardList, Home, LogO
 import { motion } from "motion/react";
 import zufeLogo from "../../assets/zufe-logo.webp";
 import { COURSE_STATE_EVENT, getCourseStats } from "../course-state";
+import { loadCareerResult } from "../career-storage";
 
 export const SchoolMark = ({ compact = false }: { compact?: boolean }) => {
   return (
@@ -63,12 +64,14 @@ export const BottomNav = () => {
 
 export const DesktopTopNav = () => {
   const location = useLocation();
+  const hasCareerResult = Boolean(loadCareerResult());
   const items = [
     { icon: Home, label: "首页", path: "/home" },
     { icon: BookOpen, label: "课程", path: "/courses" },
     { icon: CalendarDays, label: "课表", path: "/heat" },
-    { icon: ClipboardList, label: "方向测评", path: "/recommendation" },
-    { icon: BarChart3, label: "职业报告", path: "/recommendation-result" },
+    ...(hasCareerResult
+      ? [{ icon: BarChart3, label: "职业报告", path: "/recommendation-result" }]
+      : [{ icon: ClipboardList, label: "方向测评", path: "/recommendation" }]),
   ];
 
   return (

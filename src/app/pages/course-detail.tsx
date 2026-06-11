@@ -90,7 +90,43 @@ export const CourseDetail = () => {
 
   return (
     <PageWrapper>
-      <div className="min-h-screen bg-gray-50 -mt-2 lg:mx-auto lg:max-w-6xl lg:overflow-hidden lg:rounded-[28px] lg:border lg:border-gray-100">
+      <section className="hidden lg:block">
+        <button onClick={() => navigate(-1)} className="mb-5 flex items-center gap-2 text-xs font-bold text-gray-500 hover:text-blue-700"><ArrowLeft size={16} />返回课程中心</button>
+        <div className="grid grid-cols-[minmax(0,1fr)_320px] items-start gap-6">
+          <main className="min-w-0 space-y-6">
+            <section className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+              <div className="flex gap-6 p-6">
+                <div className="h-40 w-56 flex-shrink-0 overflow-hidden rounded-xl bg-gray-100"><ImageWithFallback src={course.cover} alt={course.name} className="h-full w-full object-cover" /></div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-bold text-blue-700">{course.category}</p>
+                  <h1 className="mt-2 text-3xl font-black text-gray-950">{course.name}</h1>
+                  <p className="mt-2 text-xs uppercase tracking-[0.12em] text-gray-400">{course.englishName}</p>
+                  <div className="mt-5 flex flex-wrap gap-2">{course.tags.map((tag) => <span key={tag} className={`rounded-md border px-2.5 py-1 text-[10px] font-bold ${tagStyle(tag)}`}>{tag}</span>)}</div>
+                </div>
+              </div>
+              <div className="grid grid-cols-5 border-t border-gray-200 bg-gray-50">
+                {[["教师", course.teacher], ["开课学院", course.college], ["学分", course.credits], ["选课人数", course.students.toLocaleString()], ["推荐指数", recommendationIndex]].map(([label, value], index) => <div key={label} className={`p-4 ${index ? "border-l border-gray-200" : ""}`}><p className="text-[10px] font-bold text-gray-400">{label}</p><p className="mt-1 truncate text-sm font-black text-gray-900">{value}</p></div>)}
+              </div>
+            </section>
+
+            <section className="grid grid-cols-2 gap-6">
+              <div className="rounded-xl border border-gray-200 bg-white p-6"><h2 className="text-lg font-black text-gray-950">课程简介</h2><p className="mt-4 text-sm leading-7 text-gray-600">{course.intro}</p></div>
+              <div className="rounded-xl border border-gray-200 bg-white p-6"><h2 className="text-lg font-black text-gray-950">考核标准</h2><div className="mt-4 flex items-start gap-3 rounded-lg bg-blue-50 p-4"><Award size={20} className="mt-0.5 flex-shrink-0 text-blue-700" /><p className="text-sm font-bold leading-6 text-blue-900">{course.assessment}</p></div></div>
+            </section>
+
+            {TEACHER_NOTES[course.id] && <section className="rounded-xl border border-emerald-200 bg-emerald-50 p-6"><p className="text-xs font-bold text-emerald-700">老师留言</p><p className="mt-3 text-sm font-bold leading-7 text-emerald-900">{TEACHER_NOTES[course.id]}</p></section>}
+
+            <section className="rounded-xl border border-gray-200 bg-white p-6"><div className="mb-5 flex items-center justify-between"><h2 className="text-lg font-black text-gray-950">教学大纲</h2><span className="text-xs text-gray-400">{course.outline.length} 个模块</span></div><div className="grid grid-cols-2 gap-3">{course.outline.map((item, index) => <div key={item} className="flex items-center gap-3 rounded-lg border border-gray-200 p-4"><span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md bg-blue-50 text-xs font-black text-blue-700">{index + 1}</span><p className="text-sm font-bold text-gray-700">{item}</p></div>)}</div></section>
+          </main>
+
+          <aside className="sticky top-[96px] space-y-4">
+            <div className="rounded-xl border border-gray-200 bg-white p-5"><p className="text-xs font-bold text-gray-500">选课操作</p><div className="mt-4 grid gap-2"><button onClick={toggleCompleted} className={`flex h-11 items-center justify-center gap-2 rounded-lg text-sm font-bold ${isCompleted ? "bg-red-50 text-red-600" : "bg-[#173b83] text-white"}`}><Heart size={17} fill={isCompleted ? "currentColor" : "none"} />{isCompleted ? "已加入课程" : "加入已选课程"}</button><button onClick={toggleFavorite} className={`flex h-11 items-center justify-center gap-2 rounded-lg border text-sm font-bold ${isFavorite ? "border-amber-200 bg-amber-50 text-amber-700" : "border-gray-200 text-gray-600"}`}><Bookmark size={17} fill={isFavorite ? "currentColor" : "none"} />{isFavorite ? "已收藏" : "收藏课程"}</button></div></div>
+            <div className="rounded-xl border border-gray-200 bg-white p-5"><p className="text-xs font-bold text-gray-500">选课提示</p><div className="mt-4 space-y-3 text-xs leading-5 text-gray-500"><p>先确认课程类别与学分要求。</p><p>结合考核方式和基础标签判断学习投入。</p><p>评论区内容来自同学经验，仅供参考。</p></div></div>
+          </aside>
+        </div>
+      </section>
+
+      <div className="min-h-screen bg-gray-50 -mt-2 lg:hidden">
         {/* Dynamic Gradient Header */}
         <div className={`relative h-72 bg-gradient-to-br ${gradientClass} transition-colors duration-500`}>
           <div className="absolute top-8 left-5 right-5 flex justify-between z-10">
@@ -242,8 +278,10 @@ export const CourseDetail = () => {
              </div>
           </section>
 
-          <CommentSection courseId={course.id} />
         </div>
+      </div>
+      <div className="mt-6 px-5 pb-20 lg:px-0 lg:pb-4">
+        <CommentSection courseId={course.id} />
       </div>
     </PageWrapper>
   );

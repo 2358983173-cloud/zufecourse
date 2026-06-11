@@ -42,6 +42,54 @@ export const HeatPage = () => {
 
   return (
     <PageWrapper>
+      <section className="hidden lg:block">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">Weekly Planner</p>
+            <h1 className="mt-2 text-3xl font-black text-gray-950">已选课程与模拟课表</h1>
+            <p className="mt-2 text-sm text-gray-500">检查课程组合，并生成一份便于比较时间安排的周计划。</p>
+          </div>
+          <button onClick={generateSchedule} disabled={generating} className="flex h-11 items-center gap-2 rounded-lg bg-[#173b83] px-5 text-sm font-bold text-white disabled:opacity-50">
+            {generating ? <Loader2 size={17} className="animate-spin" /> : <CalendarDays size={17} />}
+            {generating ? "正在生成" : generated ? "重新生成课表" : "生成模拟课表"}
+          </button>
+        </div>
+
+        <div className="grid grid-cols-[minmax(0,1fr)_320px] items-start gap-6">
+          <div className="min-w-0">
+            <div className="grid grid-cols-3 overflow-hidden rounded-xl border border-gray-200 bg-white">
+              {[["已选课程", stats.selectedCount], ["已选学分", stats.selectedCredits], ["剩余学分", stats.remainingCredits]].map(([label, value], index) => (
+                <div key={label} className={`p-5 ${index ? "border-l border-gray-200" : ""}`}><p className="text-xs font-bold text-gray-500">{label}</p><p className="mt-2 text-3xl font-black text-gray-950">{value}</p></div>
+              ))}
+            </div>
+
+            <div className="mt-6">
+              <div className="mb-4 flex items-center justify-between"><div><h2 className="text-lg font-black text-gray-950">周课程安排</h2><p className="mt-1 text-xs text-gray-400">按星期纵向查看，无需左右拖动</p></div>{generated && <span className="flex items-center gap-1 text-xs font-bold text-emerald-600"><CheckCircle2 size={14} />已生成</span>}</div>
+              {generating ? (
+                <div className="rounded-xl border border-gray-200 bg-white py-24 text-center"><Loader2 className="mx-auto animate-spin text-blue-700" size={30} /><p className="mt-4 text-sm font-bold text-gray-500">正在整理课程时间</p></div>
+              ) : !generated ? (
+                <div className="rounded-xl border border-dashed border-gray-300 bg-white py-24 text-center"><CalendarDays className="mx-auto text-gray-300" size={36} /><p className="mt-4 text-sm font-bold text-gray-700">尚未生成模拟课表</p><p className="mt-2 text-xs text-gray-400">点击右上角按钮，根据当前已选课程生成。</p></div>
+              ) : (
+                <div className="grid grid-cols-5 gap-3">
+                  {DAYS.map((day) => {
+                    const dayCourses = schedule.filter((item) => item.day === day);
+                    return <div key={day} className="min-h-72 rounded-xl border border-gray-200 bg-white p-3"><div className="border-b border-gray-100 pb-3"><h3 className="text-sm font-black text-gray-900">{day}</h3><p className="mt-1 text-[10px] text-gray-400">{dayCourses.length} 门课程</p></div><div className="mt-3 space-y-2">{dayCourses.length ? dayCourses.map((item) => <button key={`${item.course.id}-${item.time}`} onClick={() => navigate(`/course/${item.course.id}`)} className="w-full rounded-lg border border-blue-100 bg-blue-50 p-3 text-left hover:border-blue-300"><p className="text-[10px] font-bold text-blue-700">{item.time}</p><p className="mt-1 text-xs font-black leading-5 text-gray-900">{item.course.name}</p><p className="mt-2 flex items-center gap-1 text-[10px] text-gray-500"><MapPin size={11} />{item.room}</p></button>) : <p className="py-8 text-center text-[10px] text-gray-300">暂无课程</p>}</div></div>;
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <aside className="sticky top-[96px] rounded-xl border border-gray-200 bg-white">
+            <div className="border-b border-gray-100 p-5"><h2 className="text-sm font-black text-gray-900">当前已选课程</h2><p className="mt-1 text-xs text-gray-400">可直接移除或查看详情</p></div>
+            <div className="max-h-[680px] divide-y divide-gray-100 overflow-y-auto">
+              {selectedCourses.length ? selectedCourses.map((course) => <div key={course.id} className="p-4"><div className="flex items-start justify-between gap-3"><button onClick={() => navigate(`/course/${course.id}`)} className="min-w-0 text-left"><p className="truncate text-sm font-bold text-gray-900">{course.name}</p><p className="mt-1 text-xs text-gray-400">{course.teacher} · {course.credits} 学分</p></button><button onClick={() => { toggleSelectedCourse(course); setRefresh((value) => value + 1); }} className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-gray-400 hover:bg-red-50 hover:text-red-500"><Trash2 size={15} /></button></div></div>) : <div className="p-8 text-center text-xs text-gray-400">还没有已选课程</div>}
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <div className="lg:hidden">
       <header className="px-5 pt-5 pb-4 bg-gray-50 lg:px-0 lg:pt-0">
         <SchoolMark compact />
         <p className="text-[10px] font-black uppercase tracking-widest text-blue-700 mt-4">Course Plan</p>
@@ -148,6 +196,7 @@ export const HeatPage = () => {
           )}
         </AnimatePresence>
       </section>
+      </div>
     </PageWrapper>
   );
 };
