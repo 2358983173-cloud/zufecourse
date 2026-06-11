@@ -73,7 +73,7 @@ export const CourseList = () => {
 
   return (
     <PageWrapper showCreditPlan>
-      <header className="px-5 pt-4 pb-4 sticky top-0 z-20 border-b border-gray-100/50 backdrop-blur-md bg-white/92">
+      <header className="px-5 pt-4 pb-4 sticky top-0 z-20 border-b border-gray-100/50 backdrop-blur-md bg-white/92 lg:rounded-[24px] lg:border lg:px-6">
         <div className="flex items-center gap-3 mb-3">
           <motion.button
             whileTap={{ scale: 0.9 }}
@@ -149,7 +149,7 @@ export const CourseList = () => {
         </div>
       </header>
 
-      <div className="px-5 py-4">
+      <div className="px-5 py-4 lg:px-0">
         <div className="flex justify-between items-center mb-3 px-1">
           <h2 className="text-sm font-black text-gray-900 flex items-center gap-2">
             <ListFilter size={18} className="text-blue-700" />
@@ -160,7 +160,7 @@ export const CourseList = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-[24px] overflow-hidden shadow-sm border border-gray-100 divide-y divide-gray-50">
+        <div className="bg-white rounded-[24px] overflow-hidden shadow-sm border border-gray-100 divide-y divide-gray-50 lg:grid lg:grid-cols-2 lg:divide-y-0">
           {filteredCourses.length > 0 ? (
             <AnimatePresence initial={false}>
               {filteredCourses.map((course) => (

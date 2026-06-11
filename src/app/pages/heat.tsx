@@ -42,13 +42,13 @@ export const HeatPage = () => {
 
   return (
     <PageWrapper>
-      <header className="px-5 pt-5 pb-4 bg-gray-50">
+      <header className="px-5 pt-5 pb-4 bg-gray-50 lg:px-0 lg:pt-0">
         <SchoolMark compact />
         <p className="text-[10px] font-black uppercase tracking-widest text-blue-700 mt-4">Course Plan</p>
         <h1 className="text-2xl font-black text-gray-900 mt-1">已选课程与课表</h1>
       </header>
 
-      <section className="px-5">
+      <section className="px-5 lg:px-0 lg:max-w-2xl">
         <div className="rounded-[24px] bg-[#173b83] text-white p-5 shadow-xl shadow-blue-900/15">
           <div className="grid grid-cols-3 gap-3 text-center">
             <div><p className="text-2xl font-black">{stats.selectedCount}</p><p className="text-[10px] text-white/55 font-black">已选课程</p></div>
@@ -62,11 +62,11 @@ export const HeatPage = () => {
         </div>
       </section>
 
-      <section className="px-5 mt-6">
+      <section className="px-5 mt-6 lg:px-0">
         <h2 className="font-black text-gray-900 text-lg mb-3">已选课程</h2>
-        <div className="space-y-3">
+        <div className="space-y-3 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0">
           {selectedCourses.length === 0 ? (
-            <div className="rounded-[20px] bg-white border border-gray-100 p-6 text-center shadow-sm">
+            <div className="rounded-[20px] bg-white border border-gray-100 p-6 text-center shadow-sm lg:col-span-2">
               <CalendarDays className="mx-auto text-gray-200" size={34} />
               <p className="mt-3 text-sm font-black text-gray-900">还没有已选课程</p>
               <button onClick={() => navigate("/courses")} className="mt-4 h-10 px-5 rounded-xl bg-blue-800 text-xs font-black text-white">去选择课程</button>
@@ -101,7 +101,7 @@ export const HeatPage = () => {
         </div>
       </section>
 
-      <section className="px-5 mt-6 pb-28">
+      <section className="px-5 mt-6 pb-28 lg:px-0 lg:pb-4">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-black text-gray-900 text-lg">模拟课表</h2>
           {generated && <span className="text-[10px] font-black text-emerald-600 flex items-center gap-1"><CheckCircle2 size={13} />已生成</span>}
@@ -119,7 +119,7 @@ export const HeatPage = () => {
               <p className="text-xs text-gray-400 font-bold mt-2">生成后按星期纵向展示，不需要左右滑动。</p>
             </motion.div>
           ) : (
-            <motion.div key="schedule" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
+            <motion.div key="schedule" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5 lg:grid lg:grid-cols-2 lg:gap-5 lg:space-y-0">
               {DAYS.map((day) => {
                 const dayCourses = schedule.filter((item) => item.day === day);
                 if (dayCourses.length === 0) return null;

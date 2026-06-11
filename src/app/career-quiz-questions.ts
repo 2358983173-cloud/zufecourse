@@ -68,6 +68,66 @@ export const careerQuizQuestions: CareerQuizQuestion[] = [
       { label: "财富管理或继续深造", scores: { wealth_management: 1, postgraduate: 2 } },
     ],
   },
+  {
+    id: "course_style",
+    text: "你更喜欢哪种课程体验？",
+    options: [
+      { label: "研究市场与真实公司", scores: { investment_research: 2 } },
+      { label: "分析业务案例与风险", scores: { bank_risk: 2 } },
+      { label: "核对报表与经营数据", scores: { finance_audit: 2 } },
+      { label: "使用工具完成项目", scores: { fintech: 2 } },
+    ],
+  },
+  {
+    id: "communication",
+    text: "你对沟通表达类任务的感受是？",
+    options: [
+      { label: "喜欢与客户沟通", scores: { wealth_management: 2 } },
+      { label: "喜欢汇报研究结论", scores: { investment_research: 1, postgraduate: 1 } },
+      { label: "更喜欢书面和数据表达", scores: { finance_audit: 1, fintech: 1 } },
+      { label: "更喜欢按规则处理材料", scores: { bank_risk: 2 } },
+    ],
+  },
+  {
+    id: "challenge",
+    text: "哪种学习挑战你更能接受？",
+    options: [
+      { label: "阅读大量行业资料", scores: { investment_research: 2 } },
+      { label: "学习复杂业务规则", scores: { bank_risk: 2 } },
+      { label: "处理细节和报表", scores: { finance_audit: 2 } },
+      { label: "学习编程和模型", scores: { fintech: 2, postgraduate: 1 } },
+    ],
+  },
+  {
+    id: "foundation",
+    text: "你最希望补强哪类基础？",
+    options: [
+      { label: "投资与公司分析", scores: { investment_research: 2 } },
+      { label: "银行业务与风险管理", scores: { bank_risk: 2 } },
+      { label: "会计与财务分析", scores: { finance_audit: 2 } },
+      { label: "数学、数据或编程", scores: { fintech: 1, postgraduate: 2 } },
+    ],
+  },
+  {
+    id: "career_scene",
+    text: "哪个未来工作场景更吸引你？",
+    options: [
+      { label: "研究行业和投资机会", scores: { investment_research: 2 } },
+      { label: "审核业务和控制风险", scores: { bank_risk: 2 } },
+      { label: "分析企业经营与财务", scores: { finance_audit: 2 } },
+      { label: "为客户设计金融方案", scores: { wealth_management: 2 } },
+    ],
+  },
+  {
+    id: "long_term",
+    text: "未来两年你更想获得什么？",
+    options: [
+      { label: "投资研究作品和实习", scores: { investment_research: 2 } },
+      { label: "银行风控业务经验", scores: { bank_risk: 2 } },
+      { label: "财务分析和证书基础", scores: { finance_audit: 2 } },
+      { label: "数据项目或升学准备", scores: { fintech: 1, postgraduate: 2 } },
+    ],
+  },
 ];
 
 export const calculateCareerScores = (answers: Record<string, string>) => {

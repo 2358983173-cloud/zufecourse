@@ -45,12 +45,12 @@ export const Home = () => {
 
   return (
     <PageWrapper>
-      <header className="px-5 pt-4 pb-3 bg-gray-50/95 backdrop-blur-md sticky top-0 z-20">
+      <header className="px-5 pt-4 pb-3 bg-gray-50/95 backdrop-blur-md sticky top-0 z-20 lg:static lg:px-0 lg:pt-0">
         <div className="flex items-center gap-3">
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 lg:hidden">
             <SchoolMark compact />
           </div>
-        <form onSubmit={handleSearch} className="relative flex-1 min-w-0">
+        <form onSubmit={handleSearch} className="relative flex-1 min-w-0 lg:max-w-xl">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
           <input
             type="text"
@@ -64,7 +64,7 @@ export const Home = () => {
         </div>
       </header>
 
-      <section className="px-5 mt-3">
+      <section className="px-5 mt-3 lg:px-0">
         <motion.button
           whileTap={{ scale: 0.98 }}
           onClick={() => navigate("/courses")}
@@ -85,7 +85,7 @@ export const Home = () => {
         </motion.button>
       </section>
 
-      <section className="px-5 mt-3 grid grid-cols-2 gap-3">
+      <section className="px-5 mt-3 grid grid-cols-2 gap-3 lg:px-0 lg:max-w-2xl">
         <button
           onClick={() => navigate("/recommendation")}
           className="min-h-24 rounded-[20px] bg-white border border-gray-100 p-4 text-left shadow-sm"
@@ -108,7 +108,7 @@ export const Home = () => {
         </button>
       </section>
 
-      <section className="px-5 mt-6">
+      <section className="px-5 mt-6 lg:px-0">
         <div className="flex items-center justify-between mb-4">
           <div>
             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Career Profile</p>
@@ -128,7 +128,7 @@ export const Home = () => {
               <p className="text-xs text-gray-400 font-medium mt-1">根据问卷结果整理，可随时重新调整</p>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3 mt-4">
+          <div className="grid grid-cols-2 gap-3 mt-4 lg:grid-cols-4">
             {directionProfiles.map((item) => (
               <button
                 key={item.title}
@@ -148,7 +148,7 @@ export const Home = () => {
         </div>
       </section>
 
-      <section className="mt-6 px-5 pb-20">
+      <section className="mt-6 px-5 pb-20 lg:px-0 lg:pb-4">
         <div className="flex justify-between items-center mb-5">
           <h2 className="font-black text-gray-900 text-lg flex items-center gap-2">
             <Trophy size={20} className="text-amber-500" />
@@ -156,7 +156,7 @@ export const Home = () => {
           </h2>
           <Link to="/courses?sort=popular" className="text-[11px] font-black text-blue-700">查看全部</Link>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-3 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0">
           {hotCourses.map((course, index) => (
             <div key={course.id} className="relative bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
               <div className="absolute left-3 top-3 z-10 w-6 h-6 rounded-full bg-amber-400 text-gray-900 text-[10px] font-black flex items-center justify-center">

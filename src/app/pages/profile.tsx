@@ -26,7 +26,7 @@ export const ProfilePage = () => {
 
   return (
     <PageWrapper>
-      <div className="min-h-screen bg-[#F7F8FA] pb-28 overflow-x-hidden">
+      <div className="min-h-screen bg-[#F7F8FA] pb-28 overflow-x-hidden lg:mx-auto lg:max-w-5xl lg:pb-4">
         <section className="px-5 pt-5">
           <SchoolMark compact />
           <div className="mt-4 rounded-[26px] bg-gradient-to-br from-blue-950 to-blue-700 p-5 text-white shadow-xl shadow-blue-900/15">

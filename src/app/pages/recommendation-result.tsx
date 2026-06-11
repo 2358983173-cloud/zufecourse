@@ -23,7 +23,7 @@ export const RecommendationResult = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA] px-5 pt-5 pb-28 overflow-x-hidden">
+    <div className="min-h-screen bg-[#F7F8FA] px-5 pt-5 pb-28 overflow-x-hidden lg:mx-auto lg:max-w-5xl lg:px-0 lg:pb-8">
       <button
         onClick={() => navigate("/profile")}
         className="mb-5 w-11 h-11 rounded-2xl bg-white border border-gray-100 shadow-sm flex items-center justify-center text-gray-700"

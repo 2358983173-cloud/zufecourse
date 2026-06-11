@@ -9,7 +9,7 @@ import { ProfilePage } from "./pages/profile";
 import { HeatPage } from "./pages/heat";
 import { RecommendationFlow } from "./pages/recommendation-flow";
 import { RecommendationResult } from "./pages/recommendation-result";
-import { BottomNav } from "./components/layout";
+import { BottomNav, DesktopSidebar } from "./components/layout";
 import { AnimatePresence } from "motion/react";
 
 const Root = () => {
@@ -17,8 +17,9 @@ const Root = () => {
   const hideNav = ["/", "/login", "/recommendation"].includes(location.pathname);
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-gray-50 relative overflow-hidden flex flex-col">
-      <main className="flex-grow">
+    <div className="min-h-screen bg-gray-50 relative overflow-hidden flex flex-col lg:pl-64">
+      {!hideNav && <DesktopSidebar />}
+      <main className="flex-grow min-w-0">
         <AnimatePresence mode="wait">
           <Outlet key={location.pathname} />
         </AnimatePresence>

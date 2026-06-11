@@ -1,6 +1,6 @@
 import React from "react";
-import { NavLink, useNavigate } from "react-router";
-import { BookOpen, CalendarDays, ChevronUp, Home, User } from "lucide-react";
+import { NavLink, useLocation, useNavigate } from "react-router";
+import { BarChart3, BookOpen, CalendarDays, ChevronUp, ClipboardList, Home, User } from "lucide-react";
 import { motion } from "motion/react";
 import zufeLogo from "../../assets/zufe-logo.webp";
 import { COURSE_STATE_EVENT, getCourseStats } from "../course-state";
@@ -36,7 +36,7 @@ export const BottomNav = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/90 backdrop-blur-md border-t border-gray-100 px-6 py-2 pb-6 flex justify-between items-center z-50">
+    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/90 backdrop-blur-md border-t border-gray-100 px-6 py-2 pb-6 flex justify-between items-center z-50 lg:hidden">
       {navItems.map((item) => (
         <NavLink
           key={item.path}
@@ -58,6 +58,50 @@ export const BottomNav = () => {
         </NavLink>
       ))}
     </nav>
+  );
+};
+
+export const DesktopSidebar = () => {
+  const location = useLocation();
+  const stats = getCourseStats();
+  const showCreditPlan = location.pathname === "/courses" || location.pathname.startsWith("/course/");
+  const items = [
+    { icon: Home, label: "首页概览", path: "/home" },
+    { icon: BookOpen, label: "课程中心", path: "/courses" },
+    { icon: CalendarDays, label: "课表安排", path: "/heat" },
+    { icon: ClipboardList, label: "方向测评", path: "/recommendation" },
+    { icon: BarChart3, label: "职业报告", path: "/recommendation-result" },
+    { icon: User, label: "个人中心", path: "/profile" },
+  ];
+
+  return (
+    <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 flex-col border-r border-gray-100 bg-white px-5 py-6 lg:flex">
+      <SchoolMark compact />
+      <nav className="mt-8 space-y-1.5">
+        {items.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            className={({ isActive }) =>
+              `flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-black transition-colors ${
+                isActive ? "bg-[#173b83] text-white" : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+              }`
+            }
+          >
+            <item.icon size={18} />
+            {item.label}
+          </NavLink>
+        ))}
+      </nav>
+      <div className={`${showCreditPlan ? "block" : "hidden"} mt-auto rounded-[20px] bg-blue-50 p-4`}>
+        <p className="text-[10px] font-black uppercase tracking-widest text-blue-700">Credit Plan</p>
+        <p className="mt-2 text-2xl font-black text-[#173b83]">{stats.selectedCredits} / {stats.targetCredits}</p>
+        <p className="mt-1 text-xs font-bold text-blue-700/60">已选学分 / 目标学分</p>
+        <div className="mt-3 h-2 overflow-hidden rounded-full bg-white">
+          <div className="h-full rounded-full bg-blue-700" style={{ width: `${Math.min(100, (stats.selectedCredits / stats.targetCredits) * 100)}%` }} />
+        </div>
+      </div>
+    </aside>
   );
 };
 
@@ -84,7 +128,7 @@ export const FloatingCreditBar = () => {
   const statusColor = stats.exceededCredits ? "text-amber-600" : "text-blue-700";
 
   return (
-    <div className="fixed left-1/2 bottom-[86px] z-40 w-full max-w-md -translate-x-1/2 px-4">
+    <div className="fixed left-1/2 bottom-[86px] z-40 w-full max-w-md -translate-x-1/2 px-4 lg:left-auto lg:right-8 lg:bottom-8 lg:w-[360px] lg:translate-x-0">
       {open && (
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -126,7 +170,7 @@ export const PageWrapper = ({ children, showCreditPlan = false }: { children: Re
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -12 }}
       transition={{ duration: 0.25 }}
-      className="pb-24 min-h-screen bg-gray-50 overflow-x-hidden"
+      className="min-h-screen overflow-x-hidden bg-gray-50 pb-24 lg:mx-auto lg:max-w-[1440px] lg:px-8 lg:py-6 lg:pb-8"
     >
       {children}
       {showCreditPlan && <FloatingCreditBar />}

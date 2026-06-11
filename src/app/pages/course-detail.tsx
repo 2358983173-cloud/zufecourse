@@ -90,7 +90,7 @@ export const CourseDetail = () => {
 
   return (
     <PageWrapper>
-      <div className="min-h-screen bg-gray-50 -mt-2">
+      <div className="min-h-screen bg-gray-50 -mt-2 lg:mx-auto lg:max-w-6xl lg:overflow-hidden lg:rounded-[28px] lg:border lg:border-gray-100">
         {/* Dynamic Gradient Header */}
         <div className={`relative h-72 bg-gradient-to-br ${gradientClass} transition-colors duration-500`}>
           <div className="absolute top-8 left-5 right-5 flex justify-between z-10">
