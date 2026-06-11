@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, useLocation, useNavigate } from "react-router";
-import { BarChart3, BookOpen, CalendarDays, ChevronUp, ClipboardList, Home, User } from "lucide-react";
+import { BarChart3, BookOpen, CalendarDays, ChevronUp, ClipboardList, Home, LogOut, User } from "lucide-react";
 import { motion } from "motion/react";
 import zufeLogo from "../../assets/zufe-logo.webp";
 import { COURSE_STATE_EVENT, getCourseStats } from "../course-state";
@@ -61,47 +61,48 @@ export const BottomNav = () => {
   );
 };
 
-export const DesktopSidebar = () => {
+export const DesktopTopNav = () => {
   const location = useLocation();
-  const stats = getCourseStats();
-  const showCreditPlan = location.pathname === "/courses" || location.pathname.startsWith("/course/");
   const items = [
-    { icon: Home, label: "首页概览", path: "/home" },
-    { icon: BookOpen, label: "课程中心", path: "/courses" },
-    { icon: CalendarDays, label: "课表安排", path: "/heat" },
+    { icon: Home, label: "首页", path: "/home" },
+    { icon: BookOpen, label: "课程", path: "/courses" },
+    { icon: CalendarDays, label: "课表", path: "/heat" },
     { icon: ClipboardList, label: "方向测评", path: "/recommendation" },
     { icon: BarChart3, label: "职业报告", path: "/recommendation-result" },
-    { icon: User, label: "个人中心", path: "/profile" },
   ];
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 flex-col border-r border-gray-100 bg-white px-5 py-6 lg:flex">
-      <SchoolMark compact />
-      <nav className="mt-8 space-y-1.5">
+    <header className="fixed inset-x-0 top-0 z-50 hidden h-[72px] border-b border-gray-200/80 bg-white/95 backdrop-blur-xl lg:block">
+      <div className="mx-auto flex h-full max-w-[1440px] items-center gap-8 px-8">
+        <NavLink to="/home" className="flex-shrink-0">
+          <SchoolMark compact />
+        </NavLink>
+        <nav className="flex h-full flex-1 items-center gap-1">
         {items.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
             className={({ isActive }) =>
-              `flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-black transition-colors ${
-                isActive ? "bg-[#173b83] text-white" : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+              `relative flex h-full items-center gap-2 px-4 text-sm font-bold transition-colors ${
+                isActive ? "text-[#173b83]" : "text-gray-500 hover:text-gray-900"
               }`
             }
           >
             <item.icon size={18} />
             {item.label}
+            {location.pathname === item.path && <span className="absolute inset-x-4 bottom-0 h-0.5 bg-[#173b83]" />}
           </NavLink>
         ))}
-      </nav>
-      <div className={`${showCreditPlan ? "block" : "hidden"} mt-auto rounded-[20px] bg-blue-50 p-4`}>
-        <p className="text-[10px] font-black uppercase tracking-widest text-blue-700">Credit Plan</p>
-        <p className="mt-2 text-2xl font-black text-[#173b83]">{stats.selectedCredits} / {stats.targetCredits}</p>
-        <p className="mt-1 text-xs font-bold text-blue-700/60">已选学分 / 目标学分</p>
-        <div className="mt-3 h-2 overflow-hidden rounded-full bg-white">
-          <div className="h-full rounded-full bg-blue-700" style={{ width: `${Math.min(100, (stats.selectedCredits / stats.targetCredits) * 100)}%` }} />
-        </div>
+        </nav>
+        <NavLink to="/profile" className="flex h-10 items-center gap-2 rounded-lg border border-gray-200 px-3 text-sm font-bold text-gray-700 hover:bg-gray-50">
+          <User size={17} />
+          我的
+        </NavLink>
+        <NavLink to="/login" title="退出登录" className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-50 hover:text-gray-700">
+          <LogOut size={18} />
+        </NavLink>
       </div>
-    </aside>
+    </header>
   );
 };
 
@@ -170,7 +171,7 @@ export const PageWrapper = ({ children, showCreditPlan = false }: { children: Re
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -12 }}
       transition={{ duration: 0.25 }}
-      className="min-h-screen overflow-x-hidden bg-gray-50 pb-24 lg:mx-auto lg:max-w-[1440px] lg:px-8 lg:py-6 lg:pb-8"
+      className="min-h-screen overflow-x-hidden bg-gray-50 pb-24 lg:mx-auto lg:max-w-[1440px] lg:px-8 lg:py-8 lg:pb-10"
     >
       {children}
       {showCreditPlan && <FloatingCreditBar />}

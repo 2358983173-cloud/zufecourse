@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { motion } from "motion/react";
-import { ArrowRight, Lock, User, UserPlus } from "lucide-react";
+import { ArrowRight, BookOpenCheck, Lock, MessageSquareText, ShieldCheck, User, UserPlus } from "lucide-react";
 import { SchoolMark } from "../components/layout";
 import { state } from "../data";
 import { login, register } from "../api";
@@ -34,45 +34,99 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f7f9fc] flex flex-col justify-center p-6 relative overflow-hidden">
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-sm mx-auto">
-        <SchoolMark />
-        <div className="mt-5">
-          <p className="text-[11px] font-black text-blue-700 uppercase tracking-widest">ZUFE Finance</p>
-          <h1 className="text-2xl font-black text-gray-900 mt-2">{mode === "login" ? "登录选课助手" : "创建学生账号"}</h1>
-          <p className="text-sm text-gray-500 font-medium mt-2">登录后可发布课程评论、点赞和回复。</p>
-        </div>
+    <div className="min-h-screen bg-[#f4f6f9] p-4 lg:flex lg:items-center lg:justify-center lg:p-8">
+      <motion.main
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mx-auto grid min-h-[calc(100vh-2rem)] w-full max-w-6xl overflow-hidden bg-white shadow-xl shadow-slate-900/5 lg:min-h-[680px] lg:grid-cols-[1.08fr_0.92fr] lg:rounded-2xl"
+      >
+        <section className="hidden bg-[#12366d] p-12 text-white lg:flex lg:flex-col">
+          <div className="w-fit rounded-xl bg-white px-3 py-2">
+            <SchoolMark compact />
+          </div>
+          <div className="my-auto max-w-lg">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-200">ZUFE Finance Course</p>
+            <h1 className="mt-5 text-4xl font-black leading-tight">把选课、职业方向和课程经验放在一起。</h1>
+            <p className="mt-5 text-base leading-7 text-blue-100/80">
+              面向金融专业学生的课程辅助工具。先了解自己的方向，再查看课程、安排学分并参考同学反馈。
+            </p>
+            <div className="mt-10 grid gap-5">
+              {[
+                [BookOpenCheck, "课程信息集中查看", "按类别、热度与方向筛选课程"],
+                [ShieldCheck, "职业方向辅助判断", "问卷结果用于辅助选课，不替代培养方案"],
+                [MessageSquareText, "真实课程经验", "登录后参与课程评论与回复"],
+              ].map(([Icon, title, detail]) => {
+                const FeatureIcon = Icon as typeof BookOpenCheck;
+                return (
+                  <div key={title as string} className="flex items-start gap-4">
+                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-white/10">
+                      <FeatureIcon size={20} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold">{title as string}</p>
+                      <p className="mt-1 text-xs text-blue-100/65">{detail as string}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <p className="text-xs text-blue-100/45">浙江财经大学金融学专业课程辅助项目</p>
+        </section>
 
-        <div className="mt-5 grid grid-cols-2 gap-1 rounded-xl bg-gray-100 p-1">
-          {(["login", "register"] as const).map((item) => (
-            <button key={item} onClick={() => { setMode(item); setError(""); }} className={`h-10 rounded-lg text-xs font-black ${mode === item ? "bg-white text-blue-800 shadow-sm" : "text-gray-400"}`}>
-              {item === "login" ? "登录" : "注册"}
-            </button>
-          ))}
-        </div>
+        <section className="flex items-center px-5 py-10 sm:px-10 lg:px-14">
+          <div className="mx-auto w-full max-w-sm">
+            <div className="lg:hidden"><SchoolMark /></div>
+            <div className="mt-8 lg:mt-0">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Student Access</p>
+              <h2 className="mt-3 text-3xl font-black text-gray-950">{mode === "login" ? "欢迎回来" : "创建学生账号"}</h2>
+              <p className="mt-2 text-sm leading-6 text-gray-500">
+                {mode === "login" ? "登录后继续查看你的课程与职业方向。" : "注册后先完成方向问卷，再生成课程建议。"}
+              </p>
+            </div>
 
-        <form onSubmit={handleSubmit} className="mt-5 space-y-3">
-          <label className="relative block">
-            <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
-            <input value={studentId} onChange={(e) => setStudentId(e.target.value)} className="w-full h-13 pl-12 pr-4 bg-white rounded-2xl border-none shadow-sm text-sm" placeholder="学号或账号" required />
-          </label>
-          {mode === "register" && (
-            <label className="relative block">
-              <UserPlus className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
-              <input value={nickname} onChange={(e) => setNickname(e.target.value)} className="w-full h-13 pl-12 pr-4 bg-white rounded-2xl border-none shadow-sm text-sm" placeholder="评论区昵称" required />
-            </label>
-          )}
-          <label className="relative block">
-            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full h-13 pl-12 pr-4 bg-white rounded-2xl border-none shadow-sm text-sm" placeholder="密码，至少 8 位" required />
-          </label>
-          {error && <p className="rounded-xl bg-red-50 px-4 py-3 text-xs font-bold text-red-600">{error}</p>}
-          <button disabled={loading} className="w-full h-13 rounded-2xl bg-[#173b83] text-white font-black text-sm flex items-center justify-center gap-2 disabled:opacity-50">
-            {loading ? "正在提交..." : mode === "login" ? "登录" : "注册并开始测评"}
-            {!loading && <ArrowRight size={17} />}
-          </button>
-        </form>
-      </motion.div>
+            <div className="mt-8 grid grid-cols-2 border-b border-gray-200">
+              {(["login", "register"] as const).map((item) => (
+                <button key={item} onClick={() => { setMode(item); setError(""); }} className={`relative h-11 text-sm font-bold ${mode === item ? "text-blue-800" : "text-gray-400"}`}>
+                  {item === "login" ? "账号登录" : "新生注册"}
+                  {mode === item && <span className="absolute inset-x-0 bottom-0 h-0.5 bg-blue-800" />}
+                </button>
+              ))}
+            </div>
+
+            <form onSubmit={handleSubmit} className="mt-7 space-y-4">
+              <label className="block">
+                <span className="mb-2 block text-xs font-bold text-gray-700">学号或账号</span>
+                <span className="relative block">
+                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                  <input value={studentId} onChange={(e) => setStudentId(e.target.value)} className="h-12 w-full rounded-lg border border-gray-200 bg-white pl-11 pr-4 text-sm outline-none transition focus:border-blue-700 focus:ring-4 focus:ring-blue-50" placeholder="请输入学号或账号" required />
+                </span>
+              </label>
+              {mode === "register" && (
+                <label className="block">
+                  <span className="mb-2 block text-xs font-bold text-gray-700">评论区昵称</span>
+                  <span className="relative block">
+                    <UserPlus className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                    <input value={nickname} onChange={(e) => setNickname(e.target.value)} className="h-12 w-full rounded-lg border border-gray-200 bg-white pl-11 pr-4 text-sm outline-none transition focus:border-blue-700 focus:ring-4 focus:ring-blue-50" placeholder="请输入昵称" required />
+                  </span>
+                </label>
+              )}
+              <label className="block">
+                <span className="mb-2 block text-xs font-bold text-gray-700">密码</span>
+                <span className="relative block">
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-12 w-full rounded-lg border border-gray-200 bg-white pl-11 pr-4 text-sm outline-none transition focus:border-blue-700 focus:ring-4 focus:ring-blue-50" placeholder="至少 8 位密码" required />
+                </span>
+              </label>
+              {error && <p className="rounded-lg bg-red-50 px-4 py-3 text-xs font-bold text-red-600">{error}</p>}
+              <button disabled={loading} className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#173b83] text-sm font-bold text-white transition hover:bg-[#102d60] disabled:opacity-50">
+                {loading ? "正在提交..." : mode === "login" ? "登录并进入系统" : "注册并开始测评"}
+                {!loading && <ArrowRight size={17} />}
+              </button>
+            </form>
+          </div>
+        </section>
+      </motion.main>
     </div>
   );
 };

@@ -73,7 +73,7 @@ export const CourseList = () => {
 
   return (
     <PageWrapper showCreditPlan>
-      <header className="px-5 pt-4 pb-4 sticky top-0 z-20 border-b border-gray-100/50 backdrop-blur-md bg-white/92 lg:rounded-[24px] lg:border lg:px-6">
+      <header className="px-5 pt-4 pb-4 sticky top-0 z-20 border-b border-gray-100/50 backdrop-blur-md bg-white/92 lg:top-[72px] lg:rounded-xl lg:border lg:px-6">
         <div className="flex items-center gap-3 mb-3">
           <motion.button
             whileTap={{ scale: 0.9 }}
