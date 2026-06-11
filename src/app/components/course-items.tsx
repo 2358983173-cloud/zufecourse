@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
-import { Bookmark, Heart } from "lucide-react";
+import { Bookmark, Flame, Heart, Users } from "lucide-react";
 import { Course } from "../data";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { motion } from "motion/react";
@@ -119,5 +119,55 @@ export const CourseListItem = ({ course, onStateChange }: { course: Course, onSt
         </div>
       </Link>
     </motion.div>
+  );
+};
+
+export const DesktopCourseItem = ({ course, onStateChange }: { course: Course, onStateChange?: (id: string) => void }) => {
+  const [isFavorite, setIsFavorite] = useState(isFavoriteCourse(course.id));
+  const [isSelected, setIsSelected] = useState(isSelectedCourse(course.id));
+  const recommendationIndex = Math.round(course.rating * 12 + Math.min(course.students / 80, 35));
+
+  const toggleFavorite = (event: React.MouseEvent) => {
+    event.preventDefault();
+    toggleFavoriteCourse(course);
+    setIsFavorite(isFavoriteCourse(course.id));
+    onStateChange?.(course.id);
+  };
+  const toggleSelected = (event: React.MouseEvent) => {
+    event.preventDefault();
+    toggleSelectedCourse(course);
+    setIsSelected(isSelectedCourse(course.id));
+    onStateChange?.(course.id);
+  };
+
+  return (
+    <article className="rounded-xl border border-gray-200 bg-white p-5 transition hover:border-blue-200 hover:shadow-sm">
+      <div className="flex items-start gap-5">
+        <Link to={`/course/${course.id}`} className="h-24 w-32 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
+          <ImageWithFallback src={course.cover} alt={course.name} className="h-full w-full object-cover" />
+        </Link>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="text-xs font-bold text-blue-700">{course.category}</p>
+              <Link to={`/course/${course.id}`} className="mt-1 block truncate text-lg font-black text-gray-950 hover:text-blue-800">{course.name}</Link>
+              <p className="mt-1 text-xs text-gray-500">{course.teacher} · {course.college} · {course.credits} 学分</p>
+            </div>
+            <div className="flex flex-shrink-0 items-center gap-2">
+              <button onClick={toggleFavorite} title={isFavorite ? "取消收藏" : "收藏课程"} className={`flex h-9 w-9 items-center justify-center rounded-lg border ${isFavorite ? "border-amber-200 bg-amber-50 text-amber-600" : "border-gray-200 text-gray-400 hover:bg-gray-50"}`}><Bookmark size={17} fill={isFavorite ? "currentColor" : "none"} /></button>
+              <button onClick={toggleSelected} title={isSelected ? "移除已选" : "加入已选"} className={`flex h-9 items-center gap-2 rounded-lg px-3 text-xs font-bold ${isSelected ? "bg-red-50 text-red-600" : "bg-[#173b83] text-white"}`}><Heart size={16} fill={isSelected ? "currentColor" : "none"} />{isSelected ? "已选" : "加入已选"}</button>
+            </div>
+          </div>
+          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-gray-100 pt-3 text-xs text-gray-500">
+            <span className="flex items-center gap-1.5"><Users size={14} />{course.students} 人选课</span>
+            <span className="flex items-center gap-1.5"><Flame size={14} className="text-orange-500" />推荐指数 {recommendationIndex}</span>
+            <span>考核：{course.assessment}</span>
+          </div>
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {course.tags.slice(0, 5).map((tag) => <span key={tag} className={`rounded-md border px-2 py-1 text-[10px] font-bold ${tagStyle(tag)}`}>{tag}</span>)}
+          </div>
+        </div>
+      </div>
+    </article>
   );
 };

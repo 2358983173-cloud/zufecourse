@@ -3,6 +3,7 @@ import { Course, MOCK_COURSES, state } from "./data";
 export const CREDIT_TARGET = 22;
 export const COURSE_STATE_EVENT = "course-state-change";
 const keys = { selected: "selectedCourses", favorite: "favoriteCourses", target: "creditTarget" };
+const RECOMMENDED_COURSES_KEY = "careerRecommendedCourses";
 const COURSE_CATALOG_VERSION = "2026-06-zufe-course-catalog-v2";
 const VERSION_KEY = "courseCatalogVersion";
 const storage = () => typeof window !== "undefined" ? window.localStorage : null;
@@ -51,6 +52,18 @@ export const addSelectedCourses = (courses: Course[]) => {
   courses.forEach((course) => ids.add(course.id));
   state.completedCourseIds = new Set(ids);
   write(keys.selected, ids);
+  emit();
+};
+export const replaceCareerRecommendedCourses = (courses: Course[], previousCourses: Course[] = []) => {
+  const selectedIds = getSelectedCourseIds();
+  const previousRecommendedIds = read(RECOMMENDED_COURSES_KEY);
+  previousCourses.forEach((course) => previousRecommendedIds.add(course.id));
+  previousRecommendedIds.forEach((id) => selectedIds.delete(id));
+  const nextRecommendedIds = new Set(courses.map((course) => course.id));
+  nextRecommendedIds.forEach((id) => selectedIds.add(id));
+  state.completedCourseIds = new Set(selectedIds);
+  write(keys.selected, selectedIds);
+  write(RECOMMENDED_COURSES_KEY, nextRecommendedIds);
   emit();
 };
 export const toggleFavoriteCourse = (course: Course) => {

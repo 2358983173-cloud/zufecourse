@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowLeft, BrainCircuit, ChevronRight, Compass, Sparkles } from "lucide-react";
 import { careerQuizQuestions } from "../career-quiz-questions";
-import { saveCareerResult } from "../career-storage";
+import { clearCareerResult, loadCareerResult, saveCareerResult } from "../career-storage";
 import { getCareerReport } from "../career-storage";
-import { addSelectedCourses } from "../course-state";
+import { replaceCareerRecommendedCourses } from "../course-state";
 
 export const RecommendationFlow = () => {
   const navigate = useNavigate();
@@ -13,9 +13,15 @@ export const RecommendationFlow = () => {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisStage, setAnalysisStage] = useState(0);
+  const previousRecommendedCourses = useRef(getCareerReport(loadCareerResult()).matchedCourses);
   const currentQuestion = careerQuizQuestions[currentStep];
   const progress = ((currentStep + 1) / careerQuizQuestions.length) * 100;
   const answeredCount = Object.keys(answers).length;
+
+  useEffect(() => {
+    replaceCareerRecommendedCourses([], previousRecommendedCourses.current);
+    clearCareerResult();
+  }, []);
 
   const nextStep = () => {
     if (currentStep < careerQuizQuestions.length - 1) {
@@ -28,7 +34,7 @@ export const RecommendationFlow = () => {
     window.setTimeout(() => setAnalysisStage(2), 1300);
     window.setTimeout(() => {
       const result = saveCareerResult(answers);
-      addSelectedCourses(getCareerReport(result).matchedCourses);
+      replaceCareerRecommendedCourses(getCareerReport(result).matchedCourses);
       navigate("/recommendation-result");
     }, 2050);
   };

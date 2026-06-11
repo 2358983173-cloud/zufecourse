@@ -3,7 +3,7 @@ import { ArrowLeft, ListFilter, Search, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useNavigate, useSearchParams } from "react-router";
 import { CATEGORIES, MOCK_COURSES } from "../data";
-import { CourseListItem } from "../components/course-items";
+import { CourseListItem, DesktopCourseItem } from "../components/course-items";
 import { PageWrapper } from "../components/layout";
 import { getFavoriteCourseIds, getSelectedCourseIds } from "../course-state";
 
@@ -73,7 +73,62 @@ export const CourseList = () => {
 
   return (
     <PageWrapper showCreditPlan>
-      <header className="px-5 pt-4 pb-4 sticky top-0 z-20 border-b border-gray-100/50 backdrop-blur-md bg-white/92 lg:top-[72px] lg:rounded-xl lg:border lg:px-6">
+      <section className="hidden lg:block">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">Course Center</p>
+            <h1 className="mt-2 text-3xl font-black text-gray-950">课程中心</h1>
+            <p className="mt-2 text-sm text-gray-500">筛选、比较并安排金融学专业课程。</p>
+          </div>
+          <div className="text-right"><p className="text-2xl font-black text-gray-950">{filteredCourses.length}</p><p className="text-xs text-gray-400">当前结果</p></div>
+        </div>
+        <div className="grid grid-cols-[240px_minmax(0,1fr)] items-start gap-6">
+          <aside className="sticky top-[96px] rounded-xl border border-gray-200 bg-white p-5">
+            <div className="flex items-center gap-2 border-b border-gray-100 pb-4"><ListFilter size={17} className="text-blue-700" /><h2 className="text-sm font-bold text-gray-900">筛选课程</h2></div>
+            <div className="mt-5">
+              <p className="mb-3 text-xs font-bold text-gray-500">课程分类</p>
+              <div className="space-y-1">
+                {CATEGORIES.map((cat) => (
+                  <button key={cat} onClick={() => setSelectedCategory(cat)} className={`flex h-9 w-full items-center justify-between rounded-lg px-3 text-left text-xs font-bold ${selectedCategory === cat ? "bg-blue-50 text-blue-800" : "text-gray-500 hover:bg-gray-50"}`}>
+                    {cat}<span className={`h-1.5 w-1.5 rounded-full ${selectedCategory === cat ? "bg-blue-700" : "bg-transparent"}`} />
+                  </button>
+                ))}
+              </div>
+            </div>
+            <button onClick={() => { setSearchQuery(""); setSelectedCategory("全部"); setSortMode("default"); setViewMode("all"); }} className="mt-6 h-9 w-full rounded-lg border border-gray-200 text-xs font-bold text-gray-500 hover:bg-gray-50">重置筛选</button>
+          </aside>
+
+          <div className="min-w-0">
+            <div className="rounded-xl border border-gray-200 bg-white p-4">
+              <div className="flex items-center gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={17} />
+                  <input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="搜索课程名称、教师或学院" className="h-11 w-full rounded-lg border border-gray-200 bg-gray-50 pl-10 pr-10 text-sm outline-none focus:border-blue-600 focus:bg-white" />
+                  {searchQuery && <button onClick={() => setSearchQuery("")} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400"><X size={16} /></button>}
+                </div>
+                <div className="flex rounded-lg bg-gray-100 p-1">
+                  {viewOptions.map((option) => <button key={option.id} onClick={() => setViewMode(option.id)} className={`h-9 rounded-md px-4 text-xs font-bold ${viewMode === option.id ? "bg-white text-blue-800 shadow-sm" : "text-gray-500"}`}>{option.label}</button>)}
+                </div>
+              </div>
+              <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-4">
+                <p className="text-xs text-gray-500">当前分类：<span className="font-bold text-gray-800">{selectedCategory}</span></p>
+                <div className="flex items-center gap-1">
+                  <span className="mr-2 text-xs text-gray-400">排序</span>
+                  {sortOptions.map((option) => <button key={option.id} onClick={() => setSortMode(option.id)} className={`h-8 rounded-lg px-3 text-xs font-bold ${sortMode === option.id ? "bg-[#173b83] text-white" : "text-gray-500 hover:bg-gray-50"}`}>{option.label}</button>)}
+                </div>
+              </div>
+            </div>
+            <div className="mt-4 space-y-3">
+              {filteredCourses.length > 0 ? filteredCourses.map((course) => <DesktopCourseItem key={course.id} course={course} onStateChange={() => setRefresh((prev) => prev + 1)} />) : (
+                <div className="rounded-xl border border-gray-200 bg-white py-24 text-center"><Search size={30} className="mx-auto text-gray-300" /><p className="mt-3 text-sm font-bold text-gray-500">没有找到匹配的课程</p></div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="lg:hidden">
+      <header className="px-5 pt-4 pb-4 sticky top-0 z-20 border-b border-gray-100/50 backdrop-blur-md bg-white/92">
         <div className="flex items-center gap-3 mb-3">
           <motion.button
             whileTap={{ scale: 0.9 }}
@@ -204,6 +259,7 @@ export const CourseList = () => {
         <p className="text-center text-gray-300 text-[10px] font-black uppercase tracking-widest">
           已显示全部搜索结果
         </p>
+      </div>
       </div>
     </PageWrapper>
   );
